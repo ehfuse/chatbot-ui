@@ -109,10 +109,18 @@ export function KnowledgeComposeDialog({ open, onClose, onConfirm }: KnowledgeCo
                     id: "knowledge-compose",
                     showTitle: false,
                     children: (
-            <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, gap: 2, minHeight: 420 }}>
+            <Box
+                sx={{
+                    display: "grid",
+                    gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
+                    // 두 칸 사이 간격을 다이얼로그 본문 좌우 여백(24px)과 같게 둔다.
+                    gap: 3,
+                    minHeight: { xs: 420, md: 560 },
+                }}
+            >
                 {/* 왼쪽 — 자유서술 입력 */}
                 <Box sx={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
-                    <Typography sx={{ fontSize: "13.5px", fontWeight: 600, color: "#111827", mb: 1 }}>
+                    <Typography sx={{ fontSize: "16px", fontWeight: 600, color: "#111827", mb: 1 }}>
                         어떤 지식을 등록할까요?
                     </Typography>
                     <TextField
@@ -127,7 +135,7 @@ export function KnowledgeComposeDialog({ open, onClose, onConfirm }: KnowledgeCo
 
                 {/* 오른쪽 — 정리 결과 미리보기(실제 답변에 쓰이는 모양 그대로) */}
                 <Box sx={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
-                    <Typography sx={{ fontSize: "13.5px", fontWeight: 600, color: "#111827", mb: 1 }}>
+                    <Typography sx={{ fontSize: "16px", fontWeight: 600, color: "#111827", mb: 1 }}>
                         지식 미리보기
                     </Typography>
                     <Box
@@ -155,7 +163,7 @@ export function KnowledgeComposeDialog({ open, onClose, onConfirm }: KnowledgeCo
                                         mt: 1.5,
                                         pt: 1.5,
                                         borderTop: "1px solid rgba(15, 23, 42, 0.08)",
-                                        fontSize: "14.5px",
+                                        fontSize: "1rem",
                                         color: "#111827",
                                     }}
                                 >

@@ -31,12 +31,17 @@ export {
     type ChatbotProviderProps,
 } from "./ChatbotProvider";
 
-// 상담 화면 — 드로어 / 패널 / 팝업 창 페이지
+// 상담 화면 — 상주 호스트 / 드로어 / 패널 / 팝업 창 페이지
+export { ChatbotHostView } from "./views/ChatbotHostView";
 export { ChatbotDrawer } from "./views/ChatbotDrawer";
 export { ChatPanel } from "./views/ChatPanel";
 export { default as ChatPopupPage } from "./views/ChatPopupPage";
 
 // 관리 화면 — 5탭 페이지 + 지식 편집 다이얼로그 전역 호스트
+export {
+    default as ChatbotManageRoutePage,
+    type ChatbotManageRoutePageProps,
+} from "./views/manage/ManageRoutePage";
 export { default as ChatbotManagePage, type ChatbotManagePageProps } from "./views/manage/ManagePage";
 export { KnowledgeDialogHost } from "./views/KnowledgeDialogHost";
 export { KnowledgeDialog } from "./views/manage/dialogs/KnowledgeDialog";

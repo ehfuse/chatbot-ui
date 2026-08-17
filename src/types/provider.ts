@@ -37,5 +37,7 @@ export interface ChatbotConfig {
     FormDialogComponent?: ComponentType<any>; // 앱 공통 FormDialog(폰트 배율 등) — 미지정 시 mfd 기본
     navigate?: (path: string) => void; // 앱 내 이동(미지정 시 location.assign)
     chatPopupPath?: string; // 상담 팝업 창 경로(기본 "/chatbot")
+    managePath?: string; // 챗봇 관리 페이지 경로(기본 "/dashboard/chatbot/manage") — 지식 링크 폴백에 쓴다
+    buildSourcePostUrl?: (postSeq: number) => string; // 출처 문의글 주소(미지정 시 "문의글 열기" 버튼을 숨긴다)
     buildFileViewerUrl?: (uuid: string, name: string) => string; // 팝업 창에서 첨부를 여는 뷰어 주소
 }

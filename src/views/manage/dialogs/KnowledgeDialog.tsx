@@ -8,7 +8,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Box, Button, CircularProgress, IconButton, Tooltip, Typography } from "@mui/material";
 import { Autocomplete, ClearTextField, LabelSelect, TagsTextField, TextField } from "@ehfuse/mui-form-controls";
-import { useChatbotFormDialog, useChatbotNavigate, useChatbotSelectOptions } from "../../../ChatbotProvider";
+import {
+    useChatbotConfig,
+    useChatbotFormDialog,
+    useChatbotNavigate,
+    useChatbotSelectOptions,
+} from "../../../ChatbotProvider";
 import { mergeAutocompleteOptions } from "../../../internal/selectOptionAutocomplete";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
@@ -64,6 +69,8 @@ const EMPTY_DROP_ZONE_INDEX = -1;
 export function KnowledgeDialog({ controller, isTrainer, isHeadOffice }: KnowledgeDialogProps) {
     const { state, form, modals, deleteKnowledge, reverifyKnowledge } = controller;
     const navigate = useChatbotNavigate();
+    // 출처 문의글 주소는 앱마다 다르므로 주입받는다(미주입이면 "문의글 열기" 를 감춘다).
+    const { buildSourcePostUrl } = useChatbotConfig();
     // 다이얼로그 껍데기는 앱 공통 FormDialog(폰트 배율 등)를 주입받아 쓴다(미주입 시 mfd 기본).
     const FormDialog = useChatbotFormDialog();
     const seqRaw = form.useFormValue("seq") as number | undefined;
@@ -399,12 +406,12 @@ export function KnowledgeDialog({ controller, isTrainer, isHeadOffice }: Knowled
                                         <ReasonChip reason={dialogRow.candidate_reason} />
                                     ) : null}
                                     {/* 고객센터 이관 후보 — 출처 문의글을 문의게시판에서 바로 연다(양방향 연결). */}
-                                    {Number(dialogRow?.source_post_seq ?? 0) > 0 ? (
+                                    {buildSourcePostUrl && Number(dialogRow?.source_post_seq ?? 0) > 0 ? (
                                         <Button
                                             size="small"
                                             variant="text"
                                             onClick={() =>
-                                                navigate(`/dashboard/board/qna?seq=${Number(dialogRow?.source_post_seq)}`)
+                                                navigate(buildSourcePostUrl(Number(dialogRow?.source_post_seq)))
                                             }
                                             sx={{ fontSize: "13.5px", fontWeight: 600, minWidth: 0, px: 0.75 }}
                                         >

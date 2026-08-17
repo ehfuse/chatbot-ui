@@ -1,5 +1,6 @@
 import { Box } from "@mui/material";
 import { openKnowledgeDialogBySeq } from "../../utils/knowledgeDialogHost";
+import { useChatbotConfig } from "../../ChatbotProvider";
 
 /** 근거 표시 props */
 interface SourceKnowledgeLinkProps {
@@ -16,6 +17,7 @@ interface SourceKnowledgeLinkProps {
  * 관리 화면 딥링크를 새 탭으로 여는 예전 방식으로 물러선다.
  */
 export function SourceKnowledgeLink({ knowledgeSeq, faqSeq }: SourceKnowledgeLinkProps) {
+    const { managePath = "/dashboard/chatbot/manage" } = useChatbotConfig();
     const seq = Number(knowledgeSeq) || 0;
     const faq = Number(faqSeq) || 0;
     if (!seq && !faq) return null;
@@ -42,7 +44,7 @@ export function SourceKnowledgeLink({ knowledgeSeq, faqSeq }: SourceKnowledgeLin
             {seq ? (
                 <Box
                     component="a"
-                    href={`/dashboard/chatbot/manage?knowledge=${seq}`}
+                    href={`${managePath}?knowledge=${seq}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={handleOpen}

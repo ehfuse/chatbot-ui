@@ -7,9 +7,11 @@
   - [ChatbotAccount](#chatbotaccount)
   - [ChatbotSelectOptions](#chatbotselectoptions)
 - [화면 컴포넌트](#화면-컴포넌트)
+  - [ChatbotHostView](#chatbothostview)
   - [ChatbotDrawer](#chatbotdrawer)
   - [ChatPanel](#chatpanel)
   - [ChatPopupPage](#chatpopuppage)
+  - [ChatbotManageRoutePage](#chatbotmanageroutepage)
   - [ChatbotManagePage](#chatbotmanagepage)
   - [KnowledgeDialogHost](#knowledgedialoghost)
 - [훅](#훅)
@@ -41,6 +43,8 @@
 | `FormDialogComponent` | `ComponentType<any>` | mfd `FormDialog` | 앱 공통 다이얼로그 껍데기 |
 | `navigate` | `(path: string) => void` | `location.assign` | 앱 내 이동 |
 | `chatPopupPath` | `string` | `"/chatbot"` | 상담 팝업 창 경로 |
+| `managePath` | `string` | `"/dashboard/chatbot/manage"` | 관리 페이지 경로(지식 링크 폴백) |
+| `buildSourcePostUrl` | `(postSeq: number) => string` | — | 출처 문의글 주소(미지정 시 "문의글 열기" 숨김) |
 | `buildFileViewerUrl` | `(uuid: string, name: string) => string` | — | 팝업 창에서 첨부를 여는 뷰어 주소 |
 
 > ⚠️ `useSelectOptions` 는 렌더마다 같은 자리에서 호출되므로 참조가 안정적인 함수(모듈 스코프 훅)를 넘긴다.
@@ -71,6 +75,11 @@ interface ChatbotSelectOptions {
 
 ## 화면 컴포넌트
 
+### ChatbotHostView
+
+앱 레이아웃에 상주시키는 호스트다 — 상담 드로어 + 지식 편집 창을 함께 띄운다. props 없음.
+**앱 전체에 하나만** 마운트한다.
+
 ### ChatbotDrawer
 
 오른쪽에서 열리는 상담 드로어다. props 없음. 열림 여부는 `chatbotState.isDrawerOpen` 이 소유한다.
@@ -87,6 +96,16 @@ interface ChatbotSelectOptions {
 ### ChatPopupPage
 
 상담 대화창을 단독 페이지로 띄운다. props 없음.
+
+### ChatbotManageRoutePage
+
+관리 페이지를 딥링크(`?knowledge=<seq>`) 해석까지 포함해 감싼 라우트용 껍데기다.
+라우터 훅을 뚫지 않고 라우트에 그대로 걸 수 있다.
+
+| prop | 타입 | 기본값 | 설명 |
+| --- | --- | --- | --- |
+| `knowledgeQueryKey` | `string` | `"knowledge"` | 딥링크 쿼리 키 |
+| `onInitialKnowledgeConsumed` | `() => void` | `history.replaceState` 로 쿼리 제거 | 딥링크 소비 후 처리 |
 
 ### ChatbotManagePage
 

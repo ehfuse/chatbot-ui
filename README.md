@@ -18,11 +18,10 @@ peer 의존: `react`, `react-dom`, `@mui/material`, `@mui/icons-material`, `@emo
 ## 빠른 사용
 
 ```tsx
-import { ChatbotProvider, ChatbotDrawer, KnowledgeDialogHost } from "@ehfuse/chatbot-ui";
+import { ChatbotProvider, ChatbotHostView } from "@ehfuse/chatbot-ui";
 
 <ChatbotProvider config={{ account, headOfficeLicenseSeq: 101 }}>
-    <ChatbotDrawer />
-    <KnowledgeDialogHost />
+    <ChatbotHostView />
 </ChatbotProvider>;
 ```
 
@@ -45,9 +44,11 @@ import { ChatbotProvider, ChatbotDrawer, KnowledgeDialogHost } from "@ehfuse/cha
 
 | export | 시그니처 |
 | --- | --- |
+| `ChatbotHostView` | `() => JSX.Element` — 상주 호스트(드로어 + 지식 편집 창) |
 | `ChatbotDrawer` | `() => JSX.Element` — 오른쪽 상담 드로어 |
 | `ChatPanel` | `(props: { onClose?, onOpenPopup? }) => JSX.Element` — 드로어/팝업 공용 본문 |
 | `ChatPopupPage` | `() => JSX.Element` — 상담 팝업 창 단독 페이지 |
+| `ChatbotManageRoutePage` | `(props: ChatbotManageRoutePageProps) => JSX.Element` — 관리 5탭 + 딥링크 해석 |
 | `ChatbotManagePage` | `(props: ChatbotManagePageProps) => JSX.Element` — 관리 5탭 |
 | `KnowledgeDialogHost` | `() => JSX.Element \| null` — 지식 편집 창 전역 호스트 |
 

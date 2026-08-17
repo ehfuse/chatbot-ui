@@ -5,7 +5,8 @@
  * 지식 목록(스코프/상태/분류/제목/평가/검증일)과 상태 필터·오래된 지식 토글·검색·중복 검사를 제공한다.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Box, CircularProgress } from "@mui/material";
+import { Box, Button, CircularProgress } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 import { SearchTextField, Switch } from "@ehfuse/mui-form-controls";
 import { useChatbotSelectOptions } from "../../../ChatbotProvider";
 import { chatbotManageApi } from "../../../apis/manageApi";
@@ -31,7 +32,7 @@ const STATUS_OPTIONS = [
 
 /** 챗봇 관리 지식 탭 컴포넌트다. */
 export function KnowledgeTab({ controller, isHeadOffice }: KnowledgeTabProps) {
-    const { state, openKnowledgeDialog } = controller;
+    const { state, openKnowledgeDialog, openKnowledgeCreate } = controller;
     const itemsRaw = state.useValue("knowledgeItems") as KnowledgeRow[] | undefined;
     const items = itemsRaw || [];
     const filtersRaw = state.useValue("knowledgeFilters") as KnowledgeFilters | undefined;
@@ -149,8 +150,18 @@ export function KnowledgeTab({ controller, isHeadOffice }: KnowledgeTabProps) {
 
     return (
         <Box sx={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
-            {/* 필터 영역 — 왼쪽: 검색 + 중복검사 / 오른쪽: 오래된 지식 스위치 + 상태 버튼 */}
+            {/* 필터 영역 — 왼쪽: 지식등록 + 검색 + 중복검사 / 오른쪽: 오래된 지식 스위치 + 상태 버튼 */}
             <Box sx={{ ...manageFilterRowSx, flexShrink: 0 }}>
+                {/* 대화를 거치지 않고 교육자가 지식을 직접 쓰는 자리다. 목록 맨 앞에 둬서 바로 눈에 띄게 한다. */}
+                <Button
+                    size="small"
+                    variant="outlined"
+                    startIcon={<AddIcon />}
+                    onClick={() => openKnowledgeCreate()}
+                    sx={{ flexShrink: 0, fontSize: "13.5px", fontWeight: 600, whiteSpace: "nowrap" }}
+                >
+                    지식등록
+                </Button>
                 <SearchTextField
                     size="small"
                     placeholder="검색어를 입력하세요"

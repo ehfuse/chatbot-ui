@@ -155,7 +155,8 @@ export function KnowledgeTab({ controller, isHeadOffice }: KnowledgeTabProps) {
                 {/* 대화를 거치지 않고 교육자가 지식을 직접 쓰는 자리다. 목록 맨 앞에 둬서 바로 눈에 띄게 한다. */}
                 <Button
                     size="small"
-                    variant="outlined"
+                    variant="contained"
+                    disableElevation
                     startIcon={<AddIcon />}
                     onClick={() => openKnowledgeCreate()}
                     sx={{ flexShrink: 0, fontSize: "13.5px", fontWeight: 600, whiteSpace: "nowrap" }}

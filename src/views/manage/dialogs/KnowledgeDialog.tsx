@@ -495,7 +495,9 @@ export function KnowledgeDialog({ controller, isTrainer, isHeadOffice }: Knowled
                                 fullWidth
                             />
 
-                            {/* 본문 — 여러 줄 입력이라 지우기(✕) 버튼이 붙는 ClearTextField 대신 일반 TextField 를 쓴다. */}
+                            {/* 본문 — 여러 줄 입력이라 지우기(✕) 버튼이 붙는 ClearTextField 대신 일반 TextField 를 쓴다.
+                                maxRows 로 높이를 묶지 않는다 — 긴 본문이 입력칸 안에서만 스크롤되면 앞뒤를 같이 못 본다.
+                                본문이 길면 그대로 늘어나고 다이얼로그(mfd)가 알아서 스크롤한다. */}
                             <TextField
                                 form={form}
                                 name="content"
@@ -503,7 +505,6 @@ export function KnowledgeDialog({ controller, isTrainer, isHeadOffice }: Knowled
                                 readonly={readonly}
                                 multiline
                                 minRows={8}
-                                maxRows={20}
                                 fullWidth
                             />
 

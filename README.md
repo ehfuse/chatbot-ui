@@ -18,11 +18,15 @@ peer 의존: `react`, `react-dom`, `@mui/material`, `@mui/icons-material`, `@emo
 ## 빠른 사용
 
 ```tsx
+import { GlobalFormaProvider } from "@ehfuse/forma";
 import { ChatbotProvider, ChatbotHostView } from "@ehfuse/chatbot-ui";
 
-<ChatbotProvider config={{ account, headOfficeLicenseSeq: 101 }}>
-    <ChatbotHostView />
-</ChatbotProvider>;
+// ⚠️ forma 의 GlobalFormaProvider 가 앱 루트에 있어야 한다 — 없으면 컨트롤러 훅이 바로 던진다.
+<GlobalFormaProvider storagePrefix="my-app">
+    <ChatbotProvider config={{ account, headOfficeLicenseSeq: 101 }}>
+        <ChatbotHostView />
+    </ChatbotProvider>
+</GlobalFormaProvider>;
 ```
 
 ## 주요 export

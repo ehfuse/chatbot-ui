@@ -22,7 +22,23 @@
 npm install @ehfuse/chatbot-ui
 ```
 
-## 3. Provider 로 감싸기
+## 3. GlobalFormaProvider (필수)
+
+상담·관리 상태는 forma 전역 상태(`chatbotState` / `chatbotManageState`)가 소유한다.
+**앱 루트에 `GlobalFormaProvider` 가 없으면** 컨트롤러 훅이 첫 렌더에서
+`GlobalFormaContext must be used within GlobalFormaProvider` 를 던져 **화면이 백지가 된다.**
+
+```tsx
+import { GlobalFormaProvider } from "@ehfuse/forma";
+
+createRoot(root).render(
+    <GlobalFormaProvider storagePrefix="my-app">
+        <App />
+    </GlobalFormaProvider>
+);
+```
+
+## 4. Provider 로 감싸기
 
 앱에 매인 값은 모두 `config` 로 주입한다. 전부 선택이며, 없으면 각 지점이 기본값으로 동작한다.
 
@@ -55,7 +71,7 @@ function Layout() {
 }
 ```
 
-## 4. 화면 붙이기
+## 5. 화면 붙이기
 
 - **상담 드로어**: `<ChatbotDrawer />` 를 레이아웃에 상주시키고, 열기는
   `useChatbotController().state.setValue("isDrawerOpen", true)` 로 한다.
@@ -65,7 +81,7 @@ function Layout() {
 - **지식 편집 창**: `<KnowledgeDialogHost />` 를 앱 전체에 **하나만** 마운트한다.
   둘 이상 마운트하면 같은 `modalId` 를 두 인스턴스가 잡아 열림/닫힘이 어긋난다.
 
-## 5. 딥링크로 특정 지식 열기
+## 6. 딥링크로 특정 지식 열기
 
 관리 페이지는 라우터를 모른다. 쿼리 해석은 소비처가 하고 seq 만 넘긴다.
 

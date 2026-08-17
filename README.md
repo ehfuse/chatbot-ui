@@ -66,6 +66,15 @@ import { ChatbotProvider, ChatbotHostView } from "@ehfuse/chatbot-ui";
 
 자세한 설명은 [docs/ko](./docs/ko/getting-started.md) 를 본다.
 
+## 예제 실행
+
+앱 서버 없이 화면만 보려면 `example/` 을 띄운다. `entity-client` 자리를 메모리 목업으로 갈아끼워
+대화 전송·스트리밍 답변·지식 저장/삭제까지 브라우저 안에서 돌아간다.
+
+```bash
+cd example && npm install && npm run dev   # http://localhost:5183
+```
+
 ## 라이선스
 
 MIT

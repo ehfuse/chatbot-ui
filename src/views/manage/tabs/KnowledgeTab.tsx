@@ -162,7 +162,7 @@ export function KnowledgeTab({ controller, isHeadOffice }: KnowledgeTabProps) {
                     disableElevation
                     startIcon={<AddIcon />}
                     onClick={() => setComposeOpen(true)}
-                    sx={{ flexShrink: 0, fontSize: "13.5px", fontWeight: 600, whiteSpace: "nowrap" }}
+                    sx={{ flexShrink: 0, fontSize: "13.5px", fontWeight: 400, whiteSpace: "nowrap" }}
                 >
                     지식등록
                 </Button>

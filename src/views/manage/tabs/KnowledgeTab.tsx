@@ -14,6 +14,7 @@ import { KnowledgeList } from "../components/KnowledgeList";
 import type { useChatbotManageController } from "../../../controllers/manageController";
 import type { DuplicateGroup, KnowledgeFilters, KnowledgeRow, KnowledgeSort } from "../../../types/manage";
 import { ManageFilterSwitch } from "../components/ManageFilterSwitch";
+import { KnowledgeComposeDialog } from "../dialogs/KnowledgeComposeDialog";
 import { manageFilterRowSx } from "../components/manageTableStyles";
 
 /** 지식 탭 props 타입이다. */
@@ -33,6 +34,8 @@ const STATUS_OPTIONS = [
 /** 챗봇 관리 지식 탭 컴포넌트다. */
 export function KnowledgeTab({ controller, isHeadOffice }: KnowledgeTabProps) {
     const { state, openKnowledgeDialog, openKnowledgeCreate } = controller;
+    // 등록은 자유서술 창을 먼저 거친다 — 교육자가 마크다운/형식을 몰라도 되게 한다.
+    const [composeOpen, setComposeOpen] = useState(false);
     const itemsRaw = state.useValue("knowledgeItems") as KnowledgeRow[] | undefined;
     const items = itemsRaw || [];
     const filtersRaw = state.useValue("knowledgeFilters") as KnowledgeFilters | undefined;
@@ -158,7 +161,7 @@ export function KnowledgeTab({ controller, isHeadOffice }: KnowledgeTabProps) {
                     variant="contained"
                     disableElevation
                     startIcon={<AddIcon />}
-                    onClick={() => openKnowledgeCreate()}
+                    onClick={() => setComposeOpen(true)}
                     sx={{ flexShrink: 0, fontSize: "13.5px", fontWeight: 600, whiteSpace: "nowrap" }}
                 >
                     지식등록
@@ -221,6 +224,13 @@ export function KnowledgeTab({ controller, isHeadOffice }: KnowledgeTabProps) {
                     <CircularProgress size={20} />
                 </Box>
             ) : null}
+
+            {/* 자유서술 → 정리 → 미리보기. 확인하면 제목·분류·본문이 채워진 등록 창이 열린다. */}
+            <KnowledgeComposeDialog
+                open={composeOpen}
+                onClose={() => setComposeOpen(false)}
+                onConfirm={(prefill) => openKnowledgeCreate(prefill)}
+            />
         </Box>
     );
 }

@@ -706,8 +706,9 @@ export function KnowledgeDialog({ controller, isTrainer, isHeadOffice }: Knowled
                                 재검증
                             </Button>
                         ) : null}
-                        {/* 이미 폐기된 지식에는 폐기 버튼을 두지 않는다(같은 상태로 다시 바꿀 일이 없다). */}
-                        {status !== "rejected" ? (
+                        {/* 이미 폐기된 지식에는 폐기 버튼을 두지 않는다(같은 상태로 다시 바꿀 일이 없다).
+                            신규 등록에도 두지 않는다 — 아직 없는 지식을 폐기·승인할 일은 없다(저장이 곧 등록이다). */}
+                        {seq > 0 && status !== "rejected" ? (
                             <Button
                                 variant="outlined"
                                 color="inherit"
@@ -726,7 +727,7 @@ export function KnowledgeDialog({ controller, isTrainer, isHeadOffice }: Knowled
                         ) : null}
                         {/* 승인 지식에는 승인 버튼 대신 재검증만 둔다 — 승인→승인은 검증일만 갱신해 재검증과 겹친다.
                             폐기 지식에서는 이 버튼이 되살리는(복구) 역할을 한다. */}
-                        {status !== "verified" && (status !== "candidate" || candidateAnswered) ? (
+                        {seq > 0 && status !== "verified" && (status !== "candidate" || candidateAnswered) ? (
                             <Button
                                 variant="outlined"
                                 color="success"

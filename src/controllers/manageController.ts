@@ -30,6 +30,13 @@ export interface ChatbotModalControl {
     modalId: string; // 모달 식별자
 }
 
+/** 신규 등록 다이얼로그에 미리 채울 값이다(자유서술 정리 결과 등). */
+export interface KnowledgeCreatePrefill {
+    title?: string; // 제목
+    category?: string; // 분류
+    content?: string; // 본문(마크다운)
+}
+
 /** 지식 분류 자동완성 옵션 타입 키다(앱의 select_options 종류 이름). */
 export const KNOWLEDGE_CATEGORY_OPTION_TYPE = "chatbot_knowledge_category";
 
@@ -490,11 +497,22 @@ export function useChatbotManageController() {
         }
     };
 
-    /** 신규 지식 등록 다이얼로그를 연다. (지식 갭의 "지식으로 등록" 은 제목을 프리필한다) */
-    const openKnowledgeCreate = (prefillTitle?: string) => {
+    /**
+     * 신규 지식 등록 다이얼로그를 연다.
+     *
+     * 문자열을 넘기면 제목만 채운다(지식 갭·피드백의 "등록" 은 질문을 제목으로 쓴다).
+     * 자유서술 정리를 거친 경우에는 제목·분류·본문을 함께 넘긴다.
+     */
+    const openKnowledgeCreate = (prefill?: string | KnowledgeCreatePrefill) => {
+        const values = typeof prefill === "string" ? { title: prefill } : (prefill ?? {});
         state.setValue("dialogMode", "create");
         state.setValue("dialogRow", null);
-        form.setFormValues({ ...defaultKnowledgeFormValues, title: prefillTitle ?? "" });
+        form.setFormValues({
+            ...defaultKnowledgeFormValues,
+            title: values.title ?? "",
+            category: values.category ?? "",
+            content: values.content ?? "",
+        });
         modals.knowledge.open();
     };
 

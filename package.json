@@ -1,6 +1,6 @@
 {
     "name": "@ehfuse/chatbot-ui",
-    "version": "0.3.1",
+    "version": "0.4.1",
     "description": "A React/MUI chatbot UI — chat drawer, streaming answers, feedback, and a knowledge management console",
     "type": "module",
     "main": "dist/index.js",

@@ -204,6 +204,23 @@ function handlePost(url: string, body: Record<string, unknown>): unknown {
     }
     if (path === "/v1/chatbot/inquiry") return { ok: true, post_seq: 774, reply: null };
 
+    if (path === "/v1/chatbot/knowledge/compose") {
+        // 실제 서버는 LLM 이 정리하지만, 목업은 적은 내용을 그대로 마크다운 틀에 끼워 형태만 보여준다.
+        const text = String(body.text ?? "").trim();
+        const lines = text.split(/[.\n]/).map((line) => line.trim()).filter(Boolean);
+        return {
+            ok: true,
+            draft: {
+                title: (lines[0] ?? "새 지식").slice(0, 40),
+                category: "사용법",
+                content:
+                    `${lines[0] ?? ""}\n\n` +
+                    lines.slice(1).map((line, index) => `${index + 1}. ${line}`).join("\n") +
+                    (lines.length > 1 ? "" : "\n\n> 확인 필요: 화면 경로와 버튼 이름을 적어 주세요."),
+            },
+        };
+    }
+
     if (path === "/v1/chatbot/knowledge/draft-answer") {
         return {
             ok: true,

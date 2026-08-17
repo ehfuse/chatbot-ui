@@ -148,6 +148,14 @@ export const chatbotManageApi = {
         return entityAppServer.http.get<{ ok: boolean; stats?: ChatbotStats }>(`/v1/chatbot/stats?${qs.toString()}`);
     },
 
+    /** 교육자의 자유서술을 지식 한 건(제목/분류/본문)으로 정리한다. */
+    composeKnowledge: (text: string) =>
+        entityAppServer.http.post<{
+            ok: boolean;
+            draft?: { title: string; category: string; content: string };
+            error?: string;
+        }>("/v1/chatbot/knowledge/compose", { text }),
+
     /** 교육자 메모로 지식 본문 초안(마크다운)을 생성한다. */
     draftAnswer: (params: { title: string; situation?: string; notes: string }) =>
         entityAppServer.http.post<{ ok: boolean; draft?: string; error?: string }>(

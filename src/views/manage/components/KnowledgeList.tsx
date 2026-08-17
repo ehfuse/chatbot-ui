@@ -118,6 +118,10 @@ export function KnowledgeList({
     // 세로 스크롤 존재 여부 — 있으면 마지막 행이 표 하단 테두리에 닿으므로 하단선을 생략하고, 없으면 그린다.
     // (업무함 TaskBoxTable 과 동일한 판정 방식)
     const [hasVerticalScroll, setHasVerticalScroll] = useState(false);
+    // 목록 건수가 바뀌면 가상화 래퍼 요소가 통째로 갈릴 수 있다. 그때 예전 요소만 지켜보고 있으면
+    // 판정이 처음 값(스크롤 있음)에 멈춰, 필터로 몇 건만 남아도 마지막 행 하단선이 계속 빠진다.
+    // → 건수를 의존성에 넣어 매번 현재 요소를 다시 잡고 측정한다.
+    const rowCount = duplicateGroups ? duplicateGroups.length : items.length;
     useEffect(() => {
         if (!scrollParent) return;
         const measure = () => setHasVerticalScroll(scrollParent.scrollHeight > scrollParent.clientHeight);
@@ -127,7 +131,7 @@ export function KnowledgeList({
         // 가상화 콘텐츠 높이 변화(행 증감)도 감지한다.
         if (scrollParent.firstElementChild) observer.observe(scrollParent.firstElementChild);
         return () => observer.disconnect();
-    }, [scrollParent]);
+    }, [scrollParent, rowCount]);
 
     // 필터 메뉴를 띄울 기준 요소와 대상 컬럼(스코프/분류).
     const [filterMenu, setFilterMenu] = useState<{ kind: "scope" | "category"; anchor: HTMLElement } | null>(null);
@@ -258,7 +262,7 @@ export function KnowledgeList({
                                         <KnowledgeListRow
                                             row={row.row}
                                             searchText={searchText}
-                                            hideBottomBorder={row.last}
+                                            hideBottomBorder={row.last && hasVerticalScroll}
                                             showScope={showScope}
                                             gridTemplate={gridTemplate}
                                             onClick={onRowClick}

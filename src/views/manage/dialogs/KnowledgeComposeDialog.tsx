@@ -171,7 +171,8 @@ export function KnowledgeComposeDialog({ open, onClose, onConfirm }: KnowledgeCo
                                 </Box>
                             </>
                         ) : (
-                            <Typography sx={{ fontSize: "14px", color: "#4b5765" }}>
+                            // 왼쪽 입력칸 안내문과 같은 크기로 둔다(한쪽만 작으면 눈이 걸린다).
+                            <Typography sx={{ fontSize: "1rem", lineHeight: 1.6, color: "#4b5765" }}>
                                 왼쪽에 내용을 적고 <b>지식 미리보기</b> 를 누르시면, 챗봇이 쓸 형태로 정리한 결과가
                                 여기에 보입니다. 마음에 들지 않으면 왼쪽 내용을 고쳐 다시 누르시면 됩니다.
                             </Typography>

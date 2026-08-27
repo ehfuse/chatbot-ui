@@ -262,7 +262,7 @@ export function ChatPanel({ onClose, onOpenPopup }: ChatPanelProps) {
                 )}
             </Box>
 
-            {/* 본문 — 화면 전환 (대화 / 이전 대화 / 문의 등록) */}
+            {/* 본문 — 화면 전환 (대화 / 이전 대화 / 내 문의 / 문의 등록) */}
             {view === "sessions" ? (
                 <SessionList />
             ) : view === "inquiries" ? (

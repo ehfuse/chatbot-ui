@@ -6,7 +6,7 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { CommentBubbleIcon } from "@ehfuse/taskbox";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useChatbotController } from "../controllers/chatbotController";
-import { useIsTrainer } from "../ChatbotProvider";
+import { useChatbotConfig, useIsTrainer } from "../ChatbotProvider";
 import { useChatRealtime } from "../apis/chatRealtime";
 import type { ChatMessage } from "../types";
 import { MessageList } from "./components/MessageList";
@@ -25,7 +25,9 @@ interface ChatPanelProps {
 /** 상담 제목바 + 본문(대화/이전대화/문의) — 드로어·팝업 공용 패널이다. */
 export function ChatPanel({ onClose, onOpenPopup }: ChatPanelProps) {
     const { state } = useChatbotController();
-    const view = state.useValue("view") as "chat" | "sessions" | "inquiry";
+    const view = state.useValue("view") as "chat" | "sessions" | "inquiry" | "inquiries";
+    // "내 문의" 목록 화면은 소비처가 넘겨 준다 — 안 넘어오면 그 화면도 진입 버튼도 없다.
+    const { renderMyInquiries } = useChatbotConfig();
     // 교육자 계정이면 대화가 학습(지식 수집) 모드로 동작함을 제목에 표시한다.
     const isTrainer = useIsTrainer();
     // 드로어가 화면을 꽉 채우는 폭(sm 미만 — ChatbotDrawer 의 width: xs=100% 와 같은 기준)에서는
@@ -106,9 +108,11 @@ export function ChatPanel({ onClose, onOpenPopup }: ChatPanelProps) {
                 >
                     {view === "sessions"
                         ? "이전 대화"
-                        : view === "inquiry"
-                          ? "고객센터 등록"
-                          : `상담하기${isTrainer ? " (학습모드)" : ""}`}
+                        : view === "inquiries"
+                          ? "내 문의"
+                          : view === "inquiry"
+                            ? "고객센터 등록"
+                            : `상담하기${isTrainer ? " (학습모드)" : ""}`}
                 </Box>
                 {view === "chat" && (
                     <>
@@ -157,6 +161,9 @@ export function ChatPanel({ onClose, onOpenPopup }: ChatPanelProps) {
             {/* 본문 — 화면 전환 (대화 / 이전 대화 / 문의 등록) */}
             {view === "sessions" ? (
                 <SessionList />
+            ) : view === "inquiries" ? (
+                // 목록 화면은 소비처가 넘겨 준다 — 아이콘은 renderMyInquiries 가 있을 때만 뜨므로 여기서는 그대로 그린다.
+                renderMyInquiries?.()
             ) : view === "inquiry" ? (
                 <InquiryPanel />
             ) : (

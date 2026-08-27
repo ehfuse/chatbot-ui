@@ -1,8 +1,11 @@
-import { Box, IconButton, Tooltip, useMediaQuery, useTheme } from "@mui/material";
+import { useState } from "react";
+import { Badge, Box, IconButton, ListItemIcon, Menu, MenuItem, Tooltip, useMediaQuery, useTheme } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import SmartToyOutlinedIcon from "@mui/icons-material/SmartToyOutlined";
 import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import ListAltOutlinedIcon from "@mui/icons-material/ListAltOutlined";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { CommentBubbleIcon } from "@ehfuse/taskbox";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useChatbotController } from "../controllers/chatbotController";
@@ -27,7 +30,12 @@ export function ChatPanel({ onClose, onOpenPopup }: ChatPanelProps) {
     const { state } = useChatbotController();
     const view = state.useValue("view") as "chat" | "sessions" | "inquiry" | "inquiries";
     // "내 문의" 목록 화면은 소비처가 넘겨 준다 — 안 넘어오면 그 화면도 진입 버튼도 없다.
-    const { renderMyInquiries } = useChatbotConfig();
+    const { renderMyInquiries, myInquiryBadgeCount } = useChatbotConfig();
+    // 목록 화면을 넘겨받았을 때만 진입 버튼을 낸다(본사처럼 목록이 필요 없는 계정은 소비처가 안 넘긴다).
+    const showMyInquiries = typeof renderMyInquiries === "function";
+    const inquiryBadge = Math.max(0, Number(myInquiryBadgeCount ?? 0));
+    // 폰 제목바 ⋮ 메뉴의 기준 요소 — 넓은 화면에서는 쓰지 않는다.
+    const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
     // 교육자 계정이면 대화가 학습(지식 수집) 모드로 동작함을 제목에 표시한다.
     const isTrainer = useIsTrainer();
     // 드로어가 화면을 꽉 채우는 폭(sm 미만 — ChatbotDrawer 의 width: xs=100% 와 같은 기준)에서는
@@ -114,29 +122,125 @@ export function ChatPanel({ onClose, onOpenPopup }: ChatPanelProps) {
                             ? "고객센터 등록"
                             : `상담하기${isTrainer ? " (학습모드)" : ""}`}
                 </Box>
-                {view === "chat" && (
-                    <>
-                        <Tooltip title="새 대화">
-                            <IconButton
-                                size="small"
-                                onClick={() => void state.actions.startNewSession()}
-                                aria-label="새 대화"
+                {/* 제목바 액션 — 대화 화면에서만. 폰은 제목바가 좁아 ⋮ 한 칸에 모으고, 그보다 넓으면 아이콘을 나열한다. */}
+                {view === "chat" &&
+                    (isFullWidth ? (
+                        <>
+                            <Badge
+                                badgeContent={showMyInquiries ? inquiryBadge : 0}
+                                color="error"
+                                max={99}
+                                sx={{ "& .MuiBadge-badge": { fontSize: 10, minWidth: 16, height: 16 } }}
                             >
-                                {/* 업무함 제목의 댓글 말풍선 아이콘과 동일한 아이콘 — 작게 쓰므로 스트로크를 더 두껍게. */}
-                                <CommentBubbleIcon sx={{ fontSize: 20, "& path": { strokeWidth: 4.5 } }} />
-                            </IconButton>
-                        </Tooltip>
-                        <Tooltip title="이전 대화">
-                            <IconButton
-                                size="small"
-                                onClick={() => void state.actions.openSessionList()}
-                                aria-label="이전 대화"
+                                <IconButton
+                                    size="small"
+                                    aria-label="메뉴"
+                                    onClick={(event) => setMenuAnchor(event.currentTarget)}
+                                >
+                                    <MoreVertIcon />
+                                </IconButton>
+                            </Badge>
+                            <Menu
+                                anchorEl={menuAnchor}
+                                open={Boolean(menuAnchor)}
+                                onClose={() => setMenuAnchor(null)}
+                                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                                transformOrigin={{ vertical: "top", horizontal: "right" }}
                             >
-                                <HistoryOutlinedIcon />
-                            </IconButton>
-                        </Tooltip>
-                    </>
-                )}
+                                <MenuItem
+                                    onClick={() => {
+                                        setMenuAnchor(null);
+                                        void state.actions.startNewSession();
+                                    }}
+                                >
+                                    <ListItemIcon>
+                                        <CommentBubbleIcon sx={{ fontSize: 20, "& path": { strokeWidth: 4.5 } }} />
+                                    </ListItemIcon>
+                                    새 대화
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() => {
+                                        setMenuAnchor(null);
+                                        void state.actions.openSessionList();
+                                    }}
+                                >
+                                    <ListItemIcon>
+                                        <HistoryOutlinedIcon fontSize="small" />
+                                    </ListItemIcon>
+                                    이전 대화
+                                </MenuItem>
+                                {showMyInquiries && (
+                                    <MenuItem
+                                        onClick={() => {
+                                            setMenuAnchor(null);
+                                            state.setValue("view", "inquiries");
+                                        }}
+                                    >
+                                        <ListItemIcon>
+                                            <ListAltOutlinedIcon fontSize="small" />
+                                        </ListItemIcon>
+                                        내 문의보기
+                                        {inquiryBadge > 0 && (
+                                            <Box
+                                                component="span"
+                                                sx={{
+                                                    ml: 1.5,
+                                                    px: 0.75,
+                                                    borderRadius: 999,
+                                                    bgcolor: "error.main",
+                                                    color: "#fff",
+                                                    fontSize: 11,
+                                                    lineHeight: "16px",
+                                                }}
+                                            >
+                                                {inquiryBadge > 99 ? "99+" : inquiryBadge}
+                                            </Box>
+                                        )}
+                                    </MenuItem>
+                                )}
+                            </Menu>
+                        </>
+                    ) : (
+                        <>
+                            {showMyInquiries && (
+                                <Tooltip title="내 문의">
+                                    <Badge
+                                        badgeContent={inquiryBadge}
+                                        color="error"
+                                        max={99}
+                                        sx={{ "& .MuiBadge-badge": { fontSize: 10, minWidth: 16, height: 16 } }}
+                                    >
+                                        <IconButton
+                                            size="small"
+                                            aria-label="내 문의"
+                                            onClick={() => state.setValue("view", "inquiries")}
+                                        >
+                                            <ListAltOutlinedIcon />
+                                        </IconButton>
+                                    </Badge>
+                                </Tooltip>
+                            )}
+                            <Tooltip title="새 대화">
+                                <IconButton
+                                    size="small"
+                                    onClick={() => void state.actions.startNewSession()}
+                                    aria-label="새 대화"
+                                >
+                                    {/* 업무함 제목의 댓글 말풍선 아이콘과 동일한 아이콘 — 작게 쓰므로 스트로크를 더 두껍게. */}
+                                    <CommentBubbleIcon sx={{ fontSize: 20, "& path": { strokeWidth: 4.5 } }} />
+                                </IconButton>
+                            </Tooltip>
+                            <Tooltip title="이전 대화">
+                                <IconButton
+                                    size="small"
+                                    onClick={() => void state.actions.openSessionList()}
+                                    aria-label="이전 대화"
+                                >
+                                    <HistoryOutlinedIcon />
+                                </IconButton>
+                            </Tooltip>
+                        </>
+                    ))}
                 {onOpenPopup && (
                     <Tooltip title="새 창으로 열기">
                         {/* 대화창을 띄워 둔 채로 사이트를 계속 쓰기 위한 팝업 창 — 모바일에서는 숨긴다. */}

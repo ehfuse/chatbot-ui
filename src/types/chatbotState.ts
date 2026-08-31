@@ -3,7 +3,7 @@ import type { ChatMessage, ChatSessionSummary, InquiryDraft, StreamingState } fr
 /** 챗봇 상담 드로어 전역 상태 타입이다. */
 export interface ChatbotState {
     isDrawerOpen: boolean; // 상담 드로어 열림 여부
-    view: "chat" | "sessions" | "inquiry"; // 드로어 화면 (대화/이전대화 목록/문의 등록)
+    view: "chat" | "sessions" | "inquiry" | "inquiries"; // 드로어 화면 (대화/이전대화 목록/문의 등록/내 문의 목록)
     conversationSeq: number | null; // 현재 세션 seq
     messages: ChatMessage[]; // 현재 세션 메시지
     feedbackByIndex: Record<number, "good" | "bad">; // 메시지 인덱스별 내 평가(새로고침 후에도 👍/👎 유지)

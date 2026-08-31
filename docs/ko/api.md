@@ -46,9 +46,37 @@
 | `managePath` | `string` | `"/dashboard/chatbot/manage"` | 관리 페이지 경로(지식 링크 폴백) |
 | `buildSourcePostUrl` | `(postSeq: number) => string` | — | 출처 문의글 주소(미지정 시 "문의글 열기" 숨김) |
 | `buildFileViewerUrl` | `(uuid: string, name: string) => string` | — | 팝업 창에서 첨부를 여는 뷰어 주소 |
+| `renderMyInquiries` | `() => ReactNode` | — | 상담 창 안에서 보여 줄 "내 문의" 목록 화면(**미지정 시 진입 버튼도 숨긴다**) |
+| `myInquiryBadgeCount` | `number` | `0` | "내 문의" 진입 버튼에 붙일 미확인 건수(0 이하면 배지 없음) |
 
 > ⚠️ `useSelectOptions` 는 렌더마다 같은 자리에서 호출되므로 참조가 안정적인 함수(모듈 스코프 훅)를 넘긴다.
 > `config` 객체 자체도 `useMemo` 로 고정한다.
+
+#### renderMyInquiries — 내 문의 목록
+
+문의 목록과 그 조회 API 는 앱마다 다르므로 패키지가 갖지 않는다. 앱이 만든 화면을 그대로 받아 상담 창 안에 끼운다.
+
+**이 값을 넘기지 않으면 화면도 진입 버튼도 없다.** 그래서 "누구에게 보일지" 판정은 전적으로 앱 몫이다 —
+예를 들어 문의를 받아서 답하는 본사 계정에는 넘기지 않으면 된다. 패키지는 그 판정을 하지 않는다.
+
+```tsx
+<ChatbotProvider
+    config={{
+        // 본사는 문의를 받는 쪽이라 목록을 넘기지 않는다 → 상담 창에 진입 버튼이 뜨지 않는다.
+        renderMyInquiries: isHeadOffice ? undefined : () => <MyInquiryPanel />,
+        myInquiryBadgeCount: unreadAnswerCount,
+    }}
+>
+```
+
+진입 버튼 자리는 화면 폭에 따라 다르다.
+
+| 폭 | 진입 지점 | 배지 |
+| --- | --- | --- |
+| `sm` 이상 | 제목바의 목록 아이콘 | 그 아이콘에 표시 |
+| `sm` 미만(창이 화면을 꽉 채움) | 제목바 `⋮` → `내 문의보기` | `⋮` 와 메뉴 항목에 표시 |
+
+`sm` 미만에서는 `새 대화`·`이전 대화` 도 같은 `⋮` 메뉴로 들어간다 — 제목이 잘리지 않게 하기 위해서다.
 
 ### ChatbotAccount
 

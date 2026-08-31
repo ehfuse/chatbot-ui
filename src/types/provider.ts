@@ -40,4 +40,12 @@ export interface ChatbotConfig {
     managePath?: string; // 챗봇 관리 페이지 경로(기본 "/dashboard/chatbot/manage") — 지식 링크 폴백에 쓴다
     buildSourcePostUrl?: (postSeq: number) => string; // 출처 문의글 주소(미지정 시 "문의글 열기" 버튼을 숨긴다)
     buildFileViewerUrl?: (uuid: string, name: string) => string; // 팝업 창에서 첨부를 여는 뷰어 주소
+    /**
+     * 상담 창 안에서 보여 줄 "내 문의" 목록 화면이다.
+     * 문의 목록은 소비처(앱)의 고객센터 API·화면이라 패키지가 갖지 않는다 — 앱이 만든 화면을 그대로 받는다.
+     * ⚠️ **이 값이 없으면 "내 문의" 아이콘 자체를 노출하지 않는다.** 목록을 보여 줄 계정에게만 넘기면 된다
+     * (예: 문의를 받아서 답하는 본사 계정에는 넘기지 않는다 — 패키지는 그 판정을 하지 않는다).
+     */
+    renderMyInquiries?: () => ReactNode;
+    myInquiryBadgeCount?: number; // "내 문의" 아이콘에 붙일 미확인 건수(0 이하면 배지를 숨긴다)
 }

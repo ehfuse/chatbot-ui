@@ -48,6 +48,20 @@
 | `buildFileViewerUrl` | `(uuid: string, name: string) => string` | — | 팝업 창에서 첨부를 여는 뷰어 주소 |
 | `renderMyInquiries` | `() => ReactNode` | — | 상담 창 안에서 보여 줄 "내 문의" 목록 화면(**미지정 시 진입 버튼도 숨긴다**) |
 | `myInquiryBadgeCount` | `number` | `0` | "내 문의" 진입 버튼에 붙일 미확인 건수(0 이하면 배지 없음) |
+| `brand` | [`ChatbotBrandConfig`](#chatbotbrandconfig) | 코드샵 기본 | 상담 창 빈 화면의 로고·인사말 브랜딩 |
+
+### ChatbotBrandConfig
+
+다른 서비스가 패키지를 그대로 쓸 때 코드샵 로고·문구를 바꾸는 옵션이다(0.5.1). 모두 선택값이다.
+
+| 필드 | 타입 | 기본값 | 설명 |
+| --- | --- | --- | --- |
+| `name` | `string` | `"코드샵"` | 인사말 "안녕하세요, {name} 상담 챗봇입니다" 의 서비스 이름 |
+| `logo` | `ReactNode` | — | 로고 노드(있으면 `logoSrc` 대신 그린다 — SVG 컴포넌트 로고용) |
+| `logoSrc` | `string` | `"/codeshop/favicon.svg"` | 로고 이미지 주소 |
+| `logoAlt` | `string` | `name` 또는 `"codeshop"` | 로고 이미지 alt |
+| `welcomeTitle` | `string` | name 조합 | 인사말 전체(있으면 `name` 조합보다 우선) |
+| `welcomeSubtitle` | `ReactNode` | 코드샵 안내 문구 | 인사말 아래 안내 문구 |
 
 > ⚠️ `useSelectOptions` 는 렌더마다 같은 자리에서 호출되므로 참조가 안정적인 함수(모듈 스코프 훅)를 넘긴다.
 > `config` 객체 자체도 `useMemo` 로 고정한다.

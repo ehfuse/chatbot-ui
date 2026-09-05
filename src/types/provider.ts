@@ -24,8 +24,22 @@ export interface ChatbotSelectOptions {
  */
 export type ChatbotSelectOptionsHook = (optionType: string) => ChatbotSelectOptions;
 
+/**
+ * 상담 창 브랜딩이다(첫 대화 전 빈 화면의 로고·인사말). 모두 선택 — 비우면 코드샵 기본값이다.
+ * 패키지를 다른 서비스(업무함 등)가 그대로 쓰면서 코드샵 로고·문구가 박혀 보이는 문제로 추가했다(0.5.1).
+ */
+export interface ChatbotBrandConfig {
+    name?: string; // 서비스 이름 — 인사말 "안녕하세요, {name} 상담 챗봇입니다" 에 들어간다(기본 "코드샵")
+    logo?: ReactNode; // 로고 노드 — 있으면 logoSrc 대신 이것을 그린다(SVG 컴포넌트 로고용)
+    logoSrc?: string; // 로고 이미지 주소(기본 "/codeshop/favicon.svg")
+    logoAlt?: string; // 로고 이미지 alt(기본 name 또는 "codeshop")
+    welcomeTitle?: string; // 인사말 전체를 바꿀 때(있으면 name 조합보다 우선)
+    welcomeSubtitle?: ReactNode; // 인사말 아래 안내 문구(기본 "사용법 · 메뉴 위치 · … 무엇이든 물어보세요.")
+}
+
 /** 챗봇 UI 횡단 주입 설정이다(모두 선택 — 없으면 각 지점이 기본값으로 동작한다). */
 export interface ChatbotConfig {
+    brand?: ChatbotBrandConfig; // 상담 창 브랜딩(로고·인사말) — 비우면 코드샵 기본
     account?: ChatbotAccount | null; // 로그인 계정(소비처가 구독한 리액티브 값을 넘긴다)
     isTrainer?: boolean; // 교육자 여부(미지정 시 account.is_trainer 또는 rbac_role==="admin")
     isHeadOffice?: boolean; // 본사 여부(미지정 시 account.license_seq === headOfficeLicenseSeq)

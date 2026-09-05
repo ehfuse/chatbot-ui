@@ -3,6 +3,7 @@
 // 타입
 export type {
     ChatbotAccount,
+    ChatbotBrandConfig,
     ChatbotConfig,
     ChatbotSelectOptions,
     ChatbotSelectOptionsHook,

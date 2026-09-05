@@ -3,7 +3,7 @@ import { Box, CircularProgress, List, ListItemButton, ListItemText } from "@mui/
 import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
 import { OverlayScrollbar } from "@ehfuse/overlay-scrollbar";
 import type { OverlayScrollbarRef } from "@ehfuse/overlay-scrollbar";
-import { useIsTrainer } from "../../ChatbotProvider";
+import { useChatbotConfig, useIsTrainer } from "../../ChatbotProvider";
 import { useChatbotController } from "../../controllers/chatbotController";
 import type { ChatMessage, ChatOption, ChatSessionSummary } from "../../types";
 import { BotLabel } from "./BotLabel";
@@ -42,6 +42,9 @@ export function MessageList() {
     const isDrawerOpen = state.useValue("isDrawerOpen") as boolean | undefined;
     // 근거 지식 표시는 교육자 전용이다 — 말풍선마다 계정을 구독하지 않게 여기서 한 번만 판정한다.
     const isTrainer = useIsTrainer();
+    // 빈 화면 브랜딩 — 소비처가 안 넘기면 코드샵 기본값이다.
+    const brand = useChatbotConfig().brand ?? {};
+    const brandName = brand.name ?? "코드샵";
     const bottomRef = useRef<HTMLDivElement | null>(null);
     const scrollbarRef = useRef<OverlayScrollbarRef | null>(null);
 
@@ -153,13 +156,17 @@ export function MessageList() {
                                 gap: 1.5,
                             }}
                         >
-                            {/* 로고의 엠블럼(파란 육각형 C)만 간단히 보여준다. */}
-                            <Box
-                                component="img"
-                                src="/codeshop/favicon.svg"
-                                alt="codeshop"
-                                sx={{ width: 88, height: 88, mt: 1 }}
-                            />
+                            {/* 로고 — 소비처가 노드를 주면 그것을, 아니면 이미지(기본 코드샵 엠블럼)를 보여준다. */}
+                            {brand.logo ? (
+                                <Box sx={{ display: "flex", mt: 1 }}>{brand.logo}</Box>
+                            ) : (
+                                <Box
+                                    component="img"
+                                    src={brand.logoSrc ?? "/codeshop/favicon.svg"}
+                                    alt={brand.logoAlt ?? brand.name ?? "codeshop"}
+                                    sx={{ width: 88, height: 88, mt: 1 }}
+                                />
+                            )}
                             <Box
                                 sx={{
                                     fontSize: "17px",
@@ -169,12 +176,16 @@ export function MessageList() {
                                     color: "#111",
                                 }}
                             >
-                                안녕하세요, 코드샵 상담 챗봇입니다
+                                {brand.welcomeTitle ?? `안녕하세요, ${brandName} 상담 챗봇입니다`}
                             </Box>
                             <Box sx={{ fontSize: "14px", color: "#3f4b57", lineHeight: 1.7 }}>
-                                사용법 · 메뉴 위치 · 상황 대처 · 장애 대응까지
-                                <br />
-                                무엇이든 물어보세요.
+                                {brand.welcomeSubtitle ?? (
+                                    <>
+                                        사용법 · 메뉴 위치 · 상황 대처 · 장애 대응까지
+                                        <br />
+                                        무엇이든 물어보세요.
+                                    </>
+                                )}
                             </Box>
                             {/* 최근 대화 바로가기 — 그냥 입력하면 새 대화라 "새 대화로 시작하기" 항목은 두지 않는다. */}
                             {recentSessions.length > 0 && (

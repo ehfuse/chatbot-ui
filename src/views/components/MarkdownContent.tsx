@@ -9,6 +9,7 @@
 import { Box } from "@mui/material";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { normalizeEmphasis } from "../../utils/markdownText";
 
 interface MarkdownContentProps {
     /** 마크다운 원문 */
@@ -95,7 +96,7 @@ export function MarkdownContent({ text }: MarkdownContentProps) {
                     ),
                 }}
             >
-                {text}
+                {normalizeEmphasis(text)}
             </ReactMarkdown>
         </Box>
     );

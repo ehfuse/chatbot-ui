@@ -29,3 +29,12 @@ export function toPlainPreview(markdown: string): string {
             .trim()
     );
 }
+
+/**
+ * 굵게 표시가 깨지는 마크다운을 고친다 — `**'개발 테스트'**는` 처럼 닫는 `**` 바로 앞이 따옴표·괄호이고 뒤에 한글이 붙으면
+ * CommonMark 는 강조로 보지 않아 별표가 그대로 보인다(2026-09-10). 따옴표를 굵게 밖으로 빼 `'**개발 테스트**'는` 로 바꾼다.
+ */
+export function normalizeEmphasis(markdown: string): string {
+    if (!markdown || !markdown.includes("**")) return markdown;
+    return markdown.replace(/\*\*(['"‘“「『(\[])([^*\n]+?)(['"’”」』)\]])\*\*/g, "$1**$2**$3");
+}

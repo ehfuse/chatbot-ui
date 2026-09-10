@@ -35,6 +35,8 @@ export async function sendChatMessage(input: {
     displayLabel?: string;
     images?: ChatImageInput[];
 }): Promise<ChatSendResponse> {
+    // 보고 있던 화면 경로 — 서버가 업무 데이터 종류(지출/매출)의 **힌트**로만 쓴다(확정이 아니라 확인 질문의 선택지 순서).
+    const pagePath = typeof window !== "undefined" ? String(window.location?.pathname ?? "").slice(0, 200) : "";
     const res = await entityAppServer.http.post<ChatSendResponse & ApiEnvelope<ChatSendResponse>>(
         "/v1/chatbot/chat",
         {
@@ -43,11 +45,25 @@ export async function sendChatMessage(input: {
             ...(input.selectedValue ? { selected_value: true } : {}),
             ...(input.displayLabel?.trim() ? { display_label: input.displayLabel.trim() } : {}),
             ...(input.images?.length ? { images: input.images } : {}),
+            ...(pagePath ? { page_path: pagePath } : {}),
         },
         true,
         getChatbotRequestHeaders(),
     );
     return (res as ApiEnvelope<ChatSendResponse>).data ?? (res as ChatSendResponse);
+}
+
+/** 답변 말풍선 사건(외부 AI 링크 클릭)을 기록한다 — 지식 갭 분석용. 실패는 무시한다. */
+export async function recordTurnEvent(input: { conversationSeq: number; event: "external_ai"; value: string }): Promise<void> {
+    try {
+        await entityAppServer.http.post("/v1/chatbot/turn-event", {
+            conversation_seq: input.conversationSeq,
+            event: input.event,
+            value: input.value,
+        });
+    } catch {
+        // 기록 실패가 링크 열기를 막을 이유는 없다.
+    }
 }
 
 /** 세션 목록을 조회한다. */

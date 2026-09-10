@@ -263,6 +263,20 @@ export function AnalyticsTab({ controller, isHeadOffice, isTrainer }: AnalyticsT
                                                     }}
                                                 />
                                             ) : null}
+                                            {/* 답을 못 받아 외부 AI 로 넘어간 질문 — 지식을 채울 우선순위가 높다. */}
+                                            {row.external_ai ? (
+                                                <Chip
+                                                    label={`외부 AI(${row.external_ai})`}
+                                                    size="small"
+                                                    title="답변이 없어 외부 AI 바로가기를 눌렀습니다"
+                                                    sx={{
+                                                        bgcolor: "#ede9fe",
+                                                        color: "#5b21b6",
+                                                        fontSize: "13.5px",
+                                                        fontWeight: 600,
+                                                    }}
+                                                />
+                                            ) : null}
                                         </Box>
                                     </TableCell>
                                     <TableCell sx={manageBodyCellSx} align="center">

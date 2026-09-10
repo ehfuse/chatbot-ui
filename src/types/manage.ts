@@ -124,6 +124,7 @@ export interface GapRow {
     escalated: boolean; // 상담사 이관 여부
     question_summary: string; // 질문 요약
     license_seq: number; // 가맹점 seq
+    external_ai?: string | null; // 답을 못 받아 외부 AI 링크로 넘어간 경우 그 제공자 key(gemini/chatgpt/claude)
 }
 
 /** 지식 편집 다이얼로그 폼 타입이다. */

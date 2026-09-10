@@ -4,6 +4,7 @@ import HistoryOutlinedIcon from "@mui/icons-material/HistoryOutlined";
 import { OverlayScrollbar } from "@ehfuse/overlay-scrollbar";
 import type { OverlayScrollbarRef } from "@ehfuse/overlay-scrollbar";
 import { useChatbotConfig, useIsTrainer } from "../../ChatbotProvider";
+import { recordTurnEvent } from "../../apis/chatbotApi";
 import { useChatbotController } from "../../controllers/chatbotController";
 import type { ChatMessage, ChatOption, ChatSessionSummary } from "../../types";
 import { BotLabel } from "./BotLabel";
@@ -93,8 +94,19 @@ export function MessageList() {
         };
     }, [isDrawerOpen, scrollToBottom]);
 
-    /** 선택지 클릭 → 그 값을 사용자 메시지로 전송한다. */
+    /**
+     * 선택지 클릭 → 그 값을 사용자 메시지로 전송한다.
+     * 링크 선택지(외부 AI 바로가기)는 메시지를 보내지 않고 새 탭으로 연다 — 프리필이 안 되는 서비스를 위해 질문을 먼저 클립보드에 넣는다.
+     */
     const handleSelectOption = (option: ChatOption) => {
+        if (option.kind === "link") {
+            if (option.copy_text) {
+                void navigator.clipboard?.writeText(option.copy_text).catch(() => undefined);
+            }
+            if (option.url) window.open(option.url, "_blank", "noopener,noreferrer");
+            if (conversationSeq) void recordTurnEvent({ conversationSeq, event: "external_ai", value: option.value });
+            return;
+        }
         void state.actions.sendMessage(option.value, [], true, option.label);
     };
 

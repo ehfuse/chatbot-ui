@@ -35,6 +35,7 @@ export interface ChatbotBrandConfig {
     logoAlt?: string; // 로고 이미지 alt(기본 name 또는 "codeshop")
     welcomeTitle?: string; // 인사말 전체를 바꿀 때(있으면 name 조합보다 우선)
     welcomeSubtitle?: ReactNode; // 인사말 아래 안내 문구(기본 "사용법 · 메뉴 위치 · … 무엇이든 물어보세요.")
+    patternImage?: string; // 대화 배경 무늬 css url(...) 하나 — 비우면 코드샵 기본 꽃 무늬(타일 크기·엇갈림 배치는 기본과 같다)
 }
 
 /** 챗봇 UI 횡단 주입 설정이다(모두 선택 — 없으면 각 지점이 기본값으로 동작한다). */

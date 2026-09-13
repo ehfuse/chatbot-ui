@@ -46,6 +46,8 @@ export function MessageList() {
     // 빈 화면 브랜딩 — 소비처가 안 넘기면 코드샵 기본값이다.
     const brand = useChatbotConfig().brand ?? {};
     const brandName = brand.name ?? "코드샵";
+    // 배경 무늬 — 소비처 무늬가 있으면 기본 꽃 대신 쓴다. 기본처럼 두 겹(엇갈림)으로 깔아 크기·위치 값과 짝을 맞춘다.
+    const patternImage = brand.patternImage ? `${brand.patternImage}, ${brand.patternImage}` : CHAT_LIST_PATTERN_IMAGE;
     const bottomRef = useRef<HTMLDivElement | null>(null);
     const scrollbarRef = useRef<OverlayScrollbarRef | null>(null);
 
@@ -126,7 +128,7 @@ export function MessageList() {
                 minHeight: 0,
                 // 대화 배경은 전달사항 목록과 동일한 바탕색·패턴을 쓴다.
                 backgroundColor: CHAT_LIST_BACKGROUND_COLOR,
-                backgroundImage: CHAT_LIST_PATTERN_IMAGE,
+                backgroundImage: patternImage,
                 backgroundRepeat: "repeat",
                 backgroundSize: CHAT_LIST_PATTERN_SIZE,
                 backgroundPosition: CHAT_LIST_PATTERN_POSITION,
@@ -151,7 +153,7 @@ export function MessageList() {
                         flexShrink: 0,
                         minHeight: "100%",
                         backgroundColor: CHAT_LIST_BACKGROUND_COLOR,
-                        backgroundImage: CHAT_LIST_PATTERN_IMAGE,
+                        backgroundImage: patternImage,
                         backgroundRepeat: "repeat",
                         backgroundSize: CHAT_LIST_PATTERN_SIZE,
                         backgroundPosition: CHAT_LIST_PATTERN_POSITION,

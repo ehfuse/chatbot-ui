@@ -1,3 +1,5 @@
+import { getChatbotLocale } from "../i18n/chatbotText";
+import { formatMonthDay } from "../i18n/chatbotDate";
 /** 대화 메시지 일시 관련 유틸 (날짜 그룹 구분·시간 라벨). */
 
 /** 메시지 일시에서 날짜 키("YYYY-MM-DD")를 뽑는다. 파싱 불가면 빈 문자열이다. */
@@ -33,6 +35,11 @@ export function formatSessionTimeLabel(time?: string): string {
         parsed.getDate() === today.getDate();
     if (isToday) {
         return `${String(parsed.getHours()).padStart(2, "0")}:${String(parsed.getMinutes()).padStart(2, "0")}`;
+    }
+    const locale = getChatbotLocale();
+    // 한국어는 기존 표기 그대로, 다른 언어는 그 언어의 날짜 표기다.
+    if (locale !== "ko") {
+        return formatMonthDay(locale, parsed.getFullYear(), parsed.getMonth() + 1, parsed.getDate(), parsed.getFullYear() !== today.getFullYear());
     }
     const monthDay = `${parsed.getMonth() + 1}월 ${parsed.getDate()}일`;
     return parsed.getFullYear() === today.getFullYear() ? monthDay : `${parsed.getFullYear()}년 ${monthDay}`;

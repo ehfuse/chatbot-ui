@@ -8,6 +8,7 @@ import { MarkdownContent } from "./MarkdownContent";
 import { ReplaceCandidateList } from "./ReplaceCandidateList";
 import { formatRecordTimeLabel } from "../../internal/recordTime";
 import { useChatImageViewer } from "../../utils/chatImageViewer";
+import { useChatbotText } from "../../ChatbotProvider";
 
 /** 말풍선 props */
 interface MessageBubbleProps {
@@ -32,12 +33,13 @@ export function MessageBubble({
     showSource,
     onSelectOption,
 }: MessageBubbleProps) {
+    const t = useChatbotText();
     const openChatImageViewer = useChatImageViewer();
     const isUser = message.role === "user";
     // 말풍선 본체와 꼬리가 같은 색이어야 이어져 보인다.
     const bubbleColor = isUser ? "#e3f7d3" : "#ffffff";
     // 선택지 버튼 클릭으로 보낸 메시지는 원문 대신 라벨처럼 짧게 보인다 (#kb: 명령은 라벨을 알 수 없어 안내문으로).
-    const displayContent = isUser && message.content.startsWith("#kb:") ? "(선택지 응답)" : message.content;
+    const displayContent = isUser && message.content.startsWith("#kb:") ? t.optionAnswer : message.content;
     return (
         <Box
             sx={{
@@ -96,8 +98,8 @@ export function MessageBubble({
                             key={image.thumb}
                             component="img"
                             src={image.thumb}
-                            alt="첨부 이미지"
-                            title="클릭하면 원본을 크게 볼 수 있습니다"
+                            alt={t.attachedImage}
+                            title={t.clickToEnlarge}
                             onClick={() => openChatImageViewer(image.full, imageIndex)}
                             sx={{
                                 display: "block",
@@ -134,7 +136,7 @@ export function MessageBubble({
                     candidates={message.replace_candidates ?? []}
                     draftSeq={Number(message.replace_draft_seq) || 0}
                     disabled={sending}
-                    onPick={(value) => onSelectOption({ label: "수정하기", value })}
+                    onPick={(value) => onSelectOption({ label: t.edit, value })}
                 />
             )}
             {!isUser && conversationSeq != null && (

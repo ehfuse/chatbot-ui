@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Box, Button, Snackbar } from "@mui/material";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import type { ChatOption } from "../../types";
+import { useChatbotText } from "../../ChatbotProvider";
 
 /** 선택지 버튼 목록 props */
 interface OptionButtonsProps {
@@ -18,6 +19,7 @@ interface OptionButtonsProps {
  * 대화가 이어져도 계속 누를 수 있게 잠그지 않는다(메시지를 보내지 않으므로 대화 흐름에 영향이 없다).
  */
 export function OptionButtons({ options, selectedValue, disabled, onSelect }: OptionButtonsProps) {
+    const t = useChatbotText();
     const sendOptions = options.filter((option) => option.kind !== "link");
     const linkOptions = options.filter((option) => option.kind === "link");
     const [copiedOpen, setCopiedOpen] = useState(false);
@@ -97,7 +99,7 @@ export function OptionButtons({ options, selectedValue, disabled, onSelect }: Op
                 open={copiedOpen}
                 autoHideDuration={2500}
                 onClose={() => setCopiedOpen(false)}
-                message="질문을 복사했어요. 열린 창에 붙여넣기 하세요."
+                message={t.questionCopied}
                 anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
             />
         </>

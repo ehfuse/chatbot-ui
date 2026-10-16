@@ -1,6 +1,7 @@
 import { Box } from "@mui/material";
 import { openKnowledgeDialogBySeq } from "../../utils/knowledgeDialogHost";
 import { useChatbotConfig } from "../../ChatbotProvider";
+import { useChatbotText } from "../../ChatbotProvider";
 
 /** 근거 표시 props */
 interface SourceKnowledgeLinkProps {
@@ -17,6 +18,7 @@ interface SourceKnowledgeLinkProps {
  * 관리 화면 딥링크를 새 탭으로 여는 예전 방식으로 물러선다.
  */
 export function SourceKnowledgeLink({ knowledgeSeq, faqSeq }: SourceKnowledgeLinkProps) {
+    const t = useChatbotText();
     const { managePath = "/dashboard/chatbot/manage" } = useChatbotConfig();
     const seq = Number(knowledgeSeq) || 0;
     const faq = Number(faqSeq) || 0;
@@ -40,7 +42,7 @@ export function SourceKnowledgeLink({ knowledgeSeq, faqSeq }: SourceKnowledgeLin
                 color: "#4b5765",
             }}
         >
-            사용된 지식:{" "}
+            {t.usedKnowledge}{" "}
             {seq ? (
                 <Box
                     component="a"

@@ -4,9 +4,12 @@ import { TrashIcon } from "../../internal/icons";
 import { useChatbotController } from "../../controllers/chatbotController";
 import { toPlainPreview } from "../../utils/markdownText";
 import type { ChatSessionSummary } from "../../types";
+import { useChatbotText } from "../../ChatbotProvider";
+import { fillText } from "../../i18n/chatbotText";
 
 /** 이전 대화 목록 화면 — 선택 시 해당 세션을 연다. */
 export function SessionList() {
+    const t = useChatbotText();
     const { state } = useChatbotController();
     const rawSessions = state.useValue("sessions") as ChatSessionSummary[] | undefined;
     const sessions = rawSessions ?? [];
@@ -21,7 +24,7 @@ export function SessionList() {
             <Box sx={{ flexShrink: 0, minWidth: 0 }}>
                 {sessions.length === 0 && (
                     <Box sx={{ color: "#444", fontSize: "14px", textAlign: "center", mt: 4 }}>
-                        이전 대화가 없습니다.
+                        {t.noPreviousChats}
                     </Box>
                 )}
                 <List disablePadding>
@@ -32,10 +35,10 @@ export function SessionList() {
                             onClick={() => void state.actions.openSession(session.seq)}
                         >
                             <ListItemText
-                                primary={toPlainPreview(session.title || "") || "상담"}
+                                primary={toPlainPreview(session.title || "") || t.consultFallback}
                                 // 마지막 메시지는 마크다운 원문이라 기호를 걷어내고 한 줄로 보여준다.
                                 secondary={
-                                    toPlainPreview(session.last_message || "") || `메시지 ${session.message_count}건`
+                                    toPlainPreview(session.last_message || "") || fillText(t.messageCount, { n: session.message_count })
                                 }
                                 // flex 자식의 기본 min-width:auto 는 내용 폭(max-content)까지 벌어져
                                 // 안쪽 말줄임 규칙이 걸려도 목록이 옆으로 밀려난다 → 0 으로 눌러 줄어들게 한다.
@@ -62,7 +65,7 @@ export function SessionList() {
                             />
                             <IconButton
                                 size="small"
-                                aria-label="대화 삭제"
+                                aria-label={t.deleteChat}
                                 onClick={(event) => {
                                     event.stopPropagation();
                                     void state.actions.removeSession(session.seq);

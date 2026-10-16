@@ -1,3 +1,5 @@
+import { chatbotText, getChatbotLocale } from "../i18n/chatbotText";
+import { formatFullDate } from "../i18n/chatbotDate";
 /**
  * 대화 말풍선 시각 라벨 유틸이다 (패키지 내부 전용).
  *
@@ -51,7 +53,7 @@ export function formatRecordTimeLabel(createdTime?: string): string {
     if (!parts) return "--:--";
 
     const elapsedTime = Math.abs(Date.now() - partsToLocalMs(parts));
-    if (elapsedTime <= RECENT_RECORD_LABEL_THRESHOLD_MS) return "방금";
+    if (elapsedTime <= RECENT_RECORD_LABEL_THRESHOLD_MS) return chatbotText().justNow;
 
     return formatTimeText(parts);
 }
@@ -59,7 +61,10 @@ export function formatRecordTimeLabel(createdTime?: string): string {
 /** 날짜 구분선 라벨을 만든다("2026년 8월 17일 일요일"). */
 export function formatRecordFullDateLabel(createdTime?: string): string {
     const parts = parseDateTimeParts(createdTime);
-    if (!parts) return "날짜 미상";
+    if (!parts) return chatbotText().unknownDate;
+    const locale = getChatbotLocale();
+    // 한국어는 기존 표기 그대로, 다른 언어는 그 언어의 날짜 표기(요일 포함)다.
+    if (locale !== "ko") return formatFullDate(locale, parts.year, parts.month, parts.day);
     const weekday = WEEKDAY_LABELS[new Date(parts.year, parts.month - 1, parts.day).getDay()];
     return `${parts.year}년 ${parts.month}월 ${parts.day}일 ${weekday}요일`;
 }

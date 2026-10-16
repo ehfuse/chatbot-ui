@@ -5,6 +5,7 @@ import ThumbDownOutlinedIcon from "@mui/icons-material/ThumbDownOutlined";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 import { saveAnswerFeedback } from "../../apis/chatbotApi";
 import { useChatbotController } from "../../controllers/chatbotController";
+import { useChatbotText } from "../../ChatbotProvider";
 
 /** 피드백 버튼 props */
 interface FeedbackButtonsProps {
@@ -27,6 +28,7 @@ export function FeedbackButtons({
     knowledgeSeq,
     faqSeq,
 }: FeedbackButtonsProps) {
+    const t = useChatbotText();
     // 표시 기준은 두 가지다.
     //  ① savedRating — 서버가 메시지에 얹어 준 저장된 평가(대화를 다시 열었을 때 복원)
     //  ② 방금 누른 값 — 전역 상태에 담아 저장 응답을 기다리지 않고 바로 반영한다.
@@ -52,14 +54,14 @@ export function FeedbackButtons({
 
     return (
         <Box sx={{ display: "flex", gap: 0.25, mt: 0.5 }}>
-            <Tooltip title="도움이 됐어요">
+            <Tooltip title={t.helpful}>
                 <span>
                     <IconButton size="small" disabled={rating === "bad"} onClick={() => handleRate("good")} sx={{ color: rating === "good" ? "#2563eb" : "#64748b" }}>
                         {rating === "good" ? <ThumbUpIcon sx={{ fontSize: 16 }} /> : <ThumbUpOutlinedIcon sx={{ fontSize: 16 }} />}
                     </IconButton>
                 </span>
             </Tooltip>
-            <Tooltip title="도움이 안 됐어요">
+            <Tooltip title={t.notHelpful}>
                 <span>
                     <IconButton size="small" disabled={rating === "good"} onClick={() => handleRate("bad")} sx={{ color: rating === "bad" ? "#dc2626" : "#64748b" }}>
                         {rating === "bad" ? <ThumbDownIcon sx={{ fontSize: 16 }} /> : <ThumbDownOutlinedIcon sx={{ fontSize: 16 }} />}

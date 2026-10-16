@@ -49,6 +49,7 @@
 | `renderMyInquiries` | `() => ReactNode` | — | 상담 창 안에서 보여 줄 "내 문의" 목록 화면(**미지정 시 진입 버튼도 숨긴다**) |
 | `myInquiryBadgeCount` | `number` | `0` | "내 문의" 진입 버튼에 붙일 미확인 건수(0 이하면 배지 없음) |
 | `brand` | [`ChatbotBrandConfig`](#chatbotbrandconfig) | 코드샵 기본 | 상담 창 빈 화면의 로고·인사말 브랜딩 |
+| `locale` | `"ko" \| "en" \| "ja" \| "mn" \| "kk"` | `"ko"` | 상담 화면(대화창·입력칸·피드백·문의·대화 목록·날짜 표기) 문구 언어(0.5.5). 관리 콘솔은 본사 직원용이라 한국어 그대로다. 컴포넌트는 `useChatbotText()` 로 같은 문구를 읽을 수 있다 |
 
 ### ChatbotBrandConfig
 

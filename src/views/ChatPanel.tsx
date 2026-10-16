@@ -16,6 +16,7 @@ import { MessageList } from "./components/MessageList";
 import { ChatInput } from "./components/ChatInput";
 import { SessionList } from "./components/SessionList";
 import { InquiryPanel } from "./components/InquiryPanel";
+import { useChatbotText } from "../ChatbotProvider";
 
 /** 상담 화면 패널 props — 드로어와 팝업 창이 같은 본문을 공유한다. */
 interface ChatPanelProps {
@@ -27,6 +28,7 @@ interface ChatPanelProps {
 
 /** 상담 제목바 + 본문(대화/이전대화/문의) — 드로어·팝업 공용 패널이다. */
 export function ChatPanel({ onClose, onOpenPopup }: ChatPanelProps) {
+    const t = useChatbotText();
     const { state } = useChatbotController();
     const view = state.useValue("view") as "chat" | "sessions" | "inquiry" | "inquiries";
     // "내 문의" 목록 화면은 소비처가 넘겨 준다 — 안 넘어오면 그 화면도 진입 버튼도 없다.
@@ -48,7 +50,7 @@ export function ChatPanel({ onClose, onOpenPopup }: ChatPanelProps) {
     // 대화 화면에서는 전체 폭일 때만 닫기가 된다(옆 패널로 뜰 때는 우측 X 를 쓴다).
     const backAction =
         view !== "chat" ? () => state.setValue("view", "chat") : isFullWidth && onClose ? onClose : undefined;
-    const backLabel = view !== "chat" ? "뒤로" : "닫기";
+    const backLabel = view !== "chat" ? t.back : t.close;
 
     // 스트리밍 청크/완료/오류/추가 메시지를 상태에 반영한다 (패널이 항상 마운트되어 수신 누락 없음).
     useChatRealtime({
@@ -76,7 +78,7 @@ export function ChatPanel({ onClose, onOpenPopup }: ChatPanelProps) {
             state.setValue("sending", false);
             state.setValue("messages", [
                 ...state.getValue("messages"),
-                { role: "assistant", content: data.error || "답변 생성에 실패했습니다. 다시 시도해주세요." },
+                { role: "assistant", content: data.error || t.answerFailed },
             ]);
         },
     });
@@ -115,12 +117,12 @@ export function ChatPanel({ onClose, onOpenPopup }: ChatPanelProps) {
                     }}
                 >
                     {view === "sessions"
-                        ? "이전 대화"
+                        ? t.previousChats
                         : view === "inquiries"
-                          ? "내 문의"
+                          ? t.myInquiries
                           : view === "inquiry"
-                            ? "고객센터 등록"
-                            : `상담하기${isTrainer ? " (학습모드)" : ""}`}
+                            ? t.inquiryRegister
+                            : `${t.consult}${isTrainer ? ` (${t.trainerMode})` : ""}`}
                 </Box>
                 {/* 제목바 액션 — 대화 화면에서만. 폰은 제목바가 좁아 ⋮ 한 칸에 모으고, 그보다 넓으면 아이콘을 나열한다. */}
                 {view === "chat" &&
@@ -134,7 +136,7 @@ export function ChatPanel({ onClose, onOpenPopup }: ChatPanelProps) {
                             >
                                 <IconButton
                                     size="small"
-                                    aria-label="메뉴"
+                                    aria-label={t.menu}
                                     onClick={(event) => setMenuAnchor(event.currentTarget)}
                                 >
                                     <MoreVertIcon />
@@ -156,7 +158,7 @@ export function ChatPanel({ onClose, onOpenPopup }: ChatPanelProps) {
                                     <ListItemIcon>
                                         <CommentBubbleIcon sx={{ fontSize: 20, "& path": { strokeWidth: 4.5 } }} />
                                     </ListItemIcon>
-                                    새 대화
+                                    {t.newChat}
                                 </MenuItem>
                                 <MenuItem
                                     onClick={() => {
@@ -167,7 +169,7 @@ export function ChatPanel({ onClose, onOpenPopup }: ChatPanelProps) {
                                     <ListItemIcon>
                                         <HistoryOutlinedIcon fontSize="small" />
                                     </ListItemIcon>
-                                    이전 대화
+                                    {t.previousChats}
                                 </MenuItem>
                                 {showMyInquiries && (
                                     <MenuItem
@@ -179,7 +181,7 @@ export function ChatPanel({ onClose, onOpenPopup }: ChatPanelProps) {
                                         <ListItemIcon>
                                             <ListAltOutlinedIcon fontSize="small" />
                                         </ListItemIcon>
-                                        내 문의보기
+                                        {t.viewMyInquiries}
                                         {inquiryBadge > 0 && (
                                             <Box
                                                 component="span"
@@ -203,7 +205,7 @@ export function ChatPanel({ onClose, onOpenPopup }: ChatPanelProps) {
                     ) : (
                         <>
                             {showMyInquiries && (
-                                <Tooltip title="내 문의">
+                                <Tooltip title={t.myInquiries}>
                                     <Badge
                                         badgeContent={inquiryBadge}
                                         color="error"
@@ -212,7 +214,7 @@ export function ChatPanel({ onClose, onOpenPopup }: ChatPanelProps) {
                                     >
                                         <IconButton
                                             size="small"
-                                            aria-label="내 문의"
+                                            aria-label={t.myInquiries}
                                             onClick={() => state.setValue("view", "inquiries")}
                                         >
                                             <ListAltOutlinedIcon />
@@ -220,21 +222,21 @@ export function ChatPanel({ onClose, onOpenPopup }: ChatPanelProps) {
                                     </Badge>
                                 </Tooltip>
                             )}
-                            <Tooltip title="새 대화">
+                            <Tooltip title={t.newChat}>
                                 <IconButton
                                     size="small"
                                     onClick={() => void state.actions.startNewSession()}
-                                    aria-label="새 대화"
+                                    aria-label={t.newChat}
                                 >
                                     {/* 업무함 제목의 댓글 말풍선 아이콘과 동일한 아이콘 — 작게 쓰므로 스트로크를 더 두껍게. */}
                                     <CommentBubbleIcon sx={{ fontSize: 20, "& path": { strokeWidth: 4.5 } }} />
                                 </IconButton>
                             </Tooltip>
-                            <Tooltip title="이전 대화">
+                            <Tooltip title={t.previousChats}>
                                 <IconButton
                                     size="small"
                                     onClick={() => void state.actions.openSessionList()}
-                                    aria-label="이전 대화"
+                                    aria-label={t.previousChats}
                                 >
                                     <HistoryOutlinedIcon />
                                 </IconButton>
@@ -242,12 +244,12 @@ export function ChatPanel({ onClose, onOpenPopup }: ChatPanelProps) {
                         </>
                     ))}
                 {onOpenPopup && (
-                    <Tooltip title="새 창으로 열기">
+                    <Tooltip title={t.openNewWindow}>
                         {/* 대화창을 띄워 둔 채로 사이트를 계속 쓰기 위한 팝업 창 — 모바일에서는 숨긴다. */}
                         <IconButton
                             size="small"
                             onClick={onOpenPopup}
-                            aria-label="새 창으로 열기"
+                            aria-label={t.openNewWindow}
                             sx={{ display: { xs: "none", sm: "inline-flex" } }}
                         >
                             <OpenInNewIcon />
@@ -256,7 +258,7 @@ export function ChatPanel({ onClose, onOpenPopup }: ChatPanelProps) {
                 )}
                 {/* 우측 X — 옆 패널로 뜰 때만. 전체 폭에서는 위 좌측 ← 가 닫기 역할을 한다. */}
                 {onClose && !isFullWidth && (
-                    <IconButton size="small" onClick={onClose} aria-label="닫기">
+                    <IconButton size="small" onClick={onClose} aria-label={t.close}>
                         <CloseIcon />
                     </IconButton>
                 )}

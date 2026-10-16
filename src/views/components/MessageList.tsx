@@ -20,6 +20,8 @@ import {
 import { ChatDateLabel } from "../../internal/ChatDateLabel";
 import { formatRecordFullDateLabel } from "../../internal/recordTime";
 import { formatSessionTimeLabel, shouldShowDateDivider } from "../../utils/messageTime";
+import { useChatbotText } from "../../ChatbotProvider";
+import { fillText } from "../../i18n/chatbotText";
 
 /** 인사화면에 바로가기로 띄우는 최근 대화 개수. 이보다 많으면 "모두 보기"로 전체 목록을 연다. */
 const RECENT_SESSION_LIMIT = 5;
@@ -29,6 +31,7 @@ const DRAWER_SETTLE_SCROLL_DELAY_MS = 320;
 
 /** 메시지 목록 — 세션 메시지 + 스트리밍 중 답변을 렌더하고 항상 하단으로 스크롤한다. */
 export function MessageList() {
+    const t = useChatbotText();
     const { state } = useChatbotController();
     const rawMessages = state.useValue("messages") as ChatMessage[] | undefined;
     const messages = rawMessages ?? [];
@@ -190,14 +193,14 @@ export function MessageList() {
                                     color: "#111",
                                 }}
                             >
-                                {brand.welcomeTitle ?? `안녕하세요, ${brandName} 상담 챗봇입니다`}
+                                {brand.welcomeTitle ?? fillText(t.welcome, { name: brandName })}
                             </Box>
                             <Box sx={{ fontSize: "14px", color: "#3f4b57", lineHeight: 1.7 }}>
                                 {brand.welcomeSubtitle ?? (
                                     <>
-                                        사용법 · 메뉴 위치 · 상황 대처 · 장애 대응까지
+                                        {t.welcomeLine1}
                                         <br />
-                                        무엇이든 물어보세요.
+                                        {t.welcomeLine2}
                                     </>
                                 )}
                             </Box>
@@ -205,7 +208,7 @@ export function MessageList() {
                             {recentSessions.length > 0 && (
                                 <Box sx={{ width: "95%", mt: 1, textAlign: "left" }}>
                                     <Box sx={{ fontSize: "13.5px", color: "#3f4b57", fontWeight: 500, mb: 0.75, px: 0.5 }}>
-                                        최근 대화
+                                        {t.recentChats}
                                     </Box>
                                     <List
                                         disablePadding
@@ -229,11 +232,11 @@ export function MessageList() {
                                                 <ListItemText
                                                     // flex 아이템 min-width:auto 가 nowrap 부제 폭만큼 벌어지지 않게 0 으로 고정한다.
                                                     sx={{ minWidth: 0, my: 0 }}
-                                                    primary={toPlainPreview(session.title || "") || "상담"}
+                                                    primary={toPlainPreview(session.title || "") || t.consultFallback}
                                                     // 마지막 메시지는 마크다운 원문이라 기호를 걷어내고 한 줄로 보여준다.
                                                     secondary={
                                                         toPlainPreview(session.last_message || "") ||
-                                                        `메시지 ${session.message_count}건`
+                                                        fillText(t.messageCount, { n: session.message_count })
                                                     }
                                                     slotProps={{
                                                         primary: {
@@ -279,7 +282,7 @@ export function MessageList() {
                                                 sx={{ py: 1 }}
                                             >
                                                 <ListItemText
-                                                    primary="이전 대화 모두 보기"
+                                                    primary={t.allPreviousChats}
                                                     sx={{ my: 0 }}
                                                     slotProps={{
                                                         primary: {

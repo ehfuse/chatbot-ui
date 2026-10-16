@@ -1,3 +1,4 @@
+import { chatbotText } from "../i18n/chatbotText";
 /**
  * 마크다운 원문에서 기호를 걷어내 한 줄 미리보기 텍스트로 만든다.
  * 이전 대화 목록처럼 서식을 렌더할 수 없는 자리에서 "**굵게**" 같은 기호가 그대로 보이지 않게 한다.
@@ -8,7 +9,7 @@ export function toPlainPreview(markdown: string): string {
     return (
         markdown
             // 코드블록 ```...``` 은 통째로 안내문으로 바꾼다(미리보기에 코드를 늘어놓을 자리가 없다).
-            .replace(/```[\s\S]*?```/g, " (코드) ")
+            .replace(/```[\s\S]*?```/g, ` (${chatbotText().code}) `)
             // 인라인 코드·강조 기호는 감싼 기호만 벗기고 안의 글자는 남긴다.
             .replace(/`([^`]+)`/g, "$1")
             .replace(/\*\*([^*]+)\*\*/g, "$1")

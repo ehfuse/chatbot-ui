@@ -1,5 +1,6 @@
 import { Box } from "@mui/material";
 import SmartToyOutlinedIcon from "@mui/icons-material/SmartToyOutlined";
+import { useChatbotText } from "../../ChatbotProvider";
 
 /**
  * 챗봇 답변 말풍선 위에 붙는 "상담봇" 라벨이다.
@@ -8,6 +9,7 @@ import SmartToyOutlinedIcon from "@mui/icons-material/SmartToyOutlined";
  * 각자 그리면 한쪽만 고쳐져 답변이 끝나는 순간 라벨이 생겼다 사라진 것처럼 보인다.
  */
 export function BotLabel() {
+    const t = useChatbotText();
     return (
         <Box
             sx={{
@@ -22,7 +24,7 @@ export function BotLabel() {
             }}
         >
             <SmartToyOutlinedIcon sx={{ fontSize: 17 }} />
-            상담봇
+            {t.bot}
         </Box>
     );
 }

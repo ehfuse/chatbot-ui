@@ -13,6 +13,7 @@ import {
     type ChatImageInput,
 } from "../apis/chatbotApi";
 import type { ChatbotState, ChatMessage, ChatSessionSummary } from "../types";
+import { chatbotText } from "../i18n/chatbotText";
 
 /** 고객센터 등록 요청 선택지 value (AS persona 와 일치) */
 export const INQUIRY_REQUEST_VALUE = "고객센터에 등록해주세요";
@@ -29,7 +30,7 @@ export const loadActiveSession = () => async (ctx: ActionContext<ChatbotState>):
         ctx.setValue("messages", []);
         ctx.setValue("feedbackByIndex", {});
     } catch {
-        ctx.setValue("loadError", "대화를 불러오지 못했습니다.");
+        ctx.setValue("loadError", chatbotText().loadFailed);
     }
 };
 
@@ -43,7 +44,7 @@ export const openSession = () => async (ctx: ActionContext<ChatbotState>, seq: n
         ctx.setValue("feedbackByIndex", loaded.feedback);
         ctx.setValue("view", "chat");
     } catch {
-        ErrorAlert("대화를 불러오지 못했습니다.");
+        ErrorAlert(chatbotText().loadFailed);
     }
 };
 
@@ -59,7 +60,7 @@ export const startNewSession = () => async (ctx: ActionContext<ChatbotState>): P
         // 방금 끝낸 대화가 인사화면 "최근 대화" 에 바로 보이도록 목록을 다시 읽는다.
         ctx.setValue("sessions", await fetchSessions());
     } catch {
-        ErrorAlert("새 대화를 시작하지 못했습니다.");
+        ErrorAlert(chatbotText().newChatFailed);
     }
 };
 
@@ -85,7 +86,7 @@ export const removeSession = () => async (ctx: ActionContext<ChatbotState>, seq:
             ctx.setValue("feedbackByIndex", {});
         }
     } catch {
-        ErrorAlert("대화를 삭제하지 못했습니다.");
+        ErrorAlert(chatbotText().deleteFailed);
     }
 };
 
@@ -128,7 +129,7 @@ export const sendMessage = () =>
                 displayLabel,
                 images,
             });
-            if (!res?.ok) throw new Error(res?.error || "전송에 실패했습니다.");
+            if (!res?.ok) throw new Error(res?.error || chatbotText().sendFailed);
             ctx.setValue("conversationSeq", res.conversation_seq);
             if (res.streaming) {
                 // 청크는 realtime 으로 수신 — 표시 준비만 한다.
@@ -141,7 +142,7 @@ export const sendMessage = () =>
             }
         } catch (err) {
             ctx.setValue("sending", false);
-            ErrorAlert(err instanceof Error ? err.message : "전송에 실패했습니다.");
+            ErrorAlert(err instanceof Error ? err.message : chatbotText().sendFailed);
         }
     };
 
@@ -149,17 +150,17 @@ export const sendMessage = () =>
 async function openInquiryFlow(ctx: ActionContext<ChatbotState>): Promise<void> {
     const conversationSeq = ctx.getValue("conversationSeq");
     if (!conversationSeq) {
-        ErrorAlert("먼저 상담 내용을 입력해주세요.");
+        ErrorAlert(chatbotText().enterFirst);
         return;
     }
     ctx.setValue("sending", true);
     try {
         const draft = await fetchInquiryDraft(conversationSeq);
-        if (!draft) throw new Error("초안 생성에 실패했습니다.");
+        if (!draft) throw new Error(chatbotText().draftFailed);
         ctx.setValue("inquiryDraft", draft);
         ctx.setValue("view", "inquiry");
     } catch (err) {
-        ErrorAlert(err instanceof Error ? err.message : "문의 초안 생성에 실패했습니다.");
+        ErrorAlert(err instanceof Error ? err.message : chatbotText().inquiryDraftFailed);
     } finally {
         ctx.setValue("sending", false);
     }
@@ -179,7 +180,7 @@ export const submitInquiry = () =>
             ctx.setValue("inquiryDraft", null);
             ctx.setValue("view", "chat");
         } catch (err) {
-            ErrorAlert(err instanceof Error ? err.message : "문의 등록에 실패했습니다.");
+            ErrorAlert(err instanceof Error ? err.message : chatbotText().inquiryFailed);
         } finally {
             ctx.setValue("sending", false);
         }

@@ -5,6 +5,7 @@ import SendIcon from "@mui/icons-material/Send";
 import CloseIcon from "@mui/icons-material/Close";
 import { useChatbotController } from "../../controllers/chatbotController";
 import type { ChatImageInput } from "../../apis/chatbotApi";
+import { useChatbotText } from "../../ChatbotProvider";
 
 /** 첨부 가능한 이미지 최대 개수. */
 const MAX_ATTACH_IMAGE_COUNT = 4;
@@ -17,6 +18,7 @@ interface PendingImage {
 
 /** 드로어 하단 입력창 — 이미지 첨부(스크린샷) + 전송. 배치 규칙은 게시판 댓글 입력칸(업무함 기준)을 따른다. */
 export function ChatInput() {
+    const t = useChatbotText();
     const { state } = useChatbotController();
     const sending = state.useValue("sending") as boolean;
     const [input, setInput] = useState("");
@@ -103,7 +105,7 @@ export function ChatInput() {
                             />
                             <IconButton
                                 size="small"
-                                aria-label="첨부 제거"
+                                aria-label={t.removeAttachment}
                                 onClick={() => setImages((prev) => prev.filter((_item, i) => i !== index))}
                                 sx={{
                                     position: "absolute",
@@ -164,7 +166,7 @@ export function ChatInput() {
                         }}
                     >
                         <ImageOutlinedIcon sx={{ fontSize: 18 }} />
-                        여기에 놓으면 이미지가 첨부됩니다
+                        {t.dropHere}
                     </Box>
                 ) : null}
                 <TextField
@@ -173,7 +175,7 @@ export function ChatInput() {
                     maxRows={10}
                     fullWidth
                     inputRef={textFieldRef}
-                    placeholder="궁금한 내용을 입력하세요"
+                    placeholder={t.inputPlaceholder}
                     value={input}
                     onChange={(event) => setInput(event.target.value)}
                     onKeyDown={(event) => {
@@ -209,7 +211,7 @@ export function ChatInput() {
                 <Box sx={{ position: "absolute", left: 8, bottom: 6, display: "flex", alignItems: "center" }}>
                     <IconButton
                         size="small"
-                        aria-label="이미지 첨부"
+                        aria-label={t.attachImage}
                         onClick={() => imageInputRef.current?.click()}
                         disabled={sending || images.length >= MAX_ATTACH_IMAGE_COUNT}
                         sx={{ color: "#9a9a97" }}
@@ -219,7 +221,7 @@ export function ChatInput() {
                 </Box>
                 {/* 보내기 — 오른쪽 세로중앙 */}
                 <IconButton
-                    aria-label="보내기"
+                    aria-label={t.send}
                     onClick={handleSubmit}
                     disabled={!canSubmit}
                     sx={{

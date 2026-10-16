@@ -18,6 +18,7 @@ export type {
     StreamingState,
 } from "./types";
 export type * from "./types/manage";
+export type { ChatbotLocale, ChatbotMessages } from "./i18n/chatbotMessages";
 
 // Provider + 횡단 관심사 훅
 export {
@@ -27,6 +28,7 @@ export {
     useChatbotFormDialog,
     useChatbotNavigate,
     useChatbotSelectOptions,
+    useChatbotText,
     useIsHeadOffice,
     useIsTrainer,
     type ChatbotProviderProps,

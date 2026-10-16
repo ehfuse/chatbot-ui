@@ -9,6 +9,7 @@
 import { useCallback } from "react";
 import { useChatbotConfig } from "../ChatbotProvider";
 import { CHAT_POPUP_PATH } from "./chatPopup";
+import { chatbotText } from "../i18n/chatbotText";
 
 /** 파일 주소에서 uuid 를 뽑는다. (`/api/v1/files/<uuid>` 형태만 대상 — data URL 등은 null) */
 function extractFileUuid(src: string): string | null {
@@ -23,7 +24,7 @@ export function useChatImageViewer(): (src: string, index: number) => void {
 
     return useCallback(
         (src: string, index: number) => {
-            const name = `상담-첨부-${index + 1}.webp`;
+            const name = `${chatbotText().attachmentFile}-${index + 1}.webp`;
 
             // 팝업 창에는 전역 뷰어 호스트가 없어 인앱 확대가 안 된다 — 뷰어 전용 탭으로 대신 연다.
             if (window.location.pathname.startsWith(popupPath)) {

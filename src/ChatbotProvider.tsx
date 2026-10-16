@@ -9,6 +9,8 @@ import { createContext, useContext, useEffect, useMemo, type ReactNode } from "r
 import { FormDialog as BaseFormDialog } from "@ehfuse/mui-form-dialog";
 import { setChatbotRequestHeadersGetter } from "./internal/requestHeaders";
 import type { ChatbotAccount, ChatbotConfig, ChatbotSelectOptions } from "./types/provider";
+import { CHATBOT_MESSAGES, type ChatbotMessages } from "./i18n/chatbotMessages";
+import { setChatbotLocale, toChatbotLocale } from "./i18n/chatbotText";
 
 /** 설정 컨텍스트다(기본값 = 빈 설정 — 각 소비 지점이 폴백을 가진다). */
 const ChatbotConfigContext = createContext<ChatbotConfig>({});
@@ -22,6 +24,8 @@ export interface ChatbotProviderProps {
 /** 챗봇 UI 설정을 주입한다. */
 export function ChatbotProvider({ config, children }: ChatbotProviderProps) {
     const value = useMemo(() => config ?? {}, [config]);
+    // 컴포넌트 밖(액션 알림·날짜 표기)이 읽을 언어를 렌더할 때 적어 둔다 — 자식이 그리기 전에 맞아야 한다.
+    setChatbotLocale(toChatbotLocale(value.locale));
 
     // API 함수는 컴포넌트 밖에서 호출되므로 헤더 공급자만 모듈 등록소로 넘긴다.
     useEffect(() => {
@@ -30,6 +34,12 @@ export function ChatbotProvider({ config, children }: ChatbotProviderProps) {
     }, [value.getRequestHeaders]);
 
     return <ChatbotConfigContext.Provider value={value}>{children}</ChatbotConfigContext.Provider>;
+}
+
+/** 상담 화면 문구를 지금 언어로 읽는다(Provider 없으면 한국어). */
+export function useChatbotText(): ChatbotMessages {
+    const locale = useContext(ChatbotConfigContext).locale;
+    return CHATBOT_MESSAGES[toChatbotLocale(locale)];
 }
 
 /** 현재 주입 설정을 읽는다(Provider 없으면 빈 설정). */

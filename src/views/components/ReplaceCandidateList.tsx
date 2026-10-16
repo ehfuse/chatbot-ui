@@ -3,6 +3,8 @@ import { Box, Button, Collapse, IconButton } from "@mui/material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import type { ReplaceCandidate } from "../../types";
+import { useChatbotText } from "../../ChatbotProvider";
+import { fillText } from "../../i18n/chatbotText";
 
 /** 정정 후보 목록 props */
 interface ReplaceCandidateListProps {
@@ -18,6 +20,7 @@ interface ReplaceCandidateListProps {
  * (자동으로 덮어쓰지 않는다 — 비슷하지만 다른 주제를 덮으면 멀쩡한 지식이 사라진다)
  */
 export function ReplaceCandidateList({ candidates, draftSeq, disabled, onPick }: ReplaceCandidateListProps) {
+    const t = useChatbotText();
     // 펼쳐서 본문을 보고 있는 후보 seq (null 이면 모두 접힘)
     const [openSeq, setOpenSeq] = useState<number | null>(null);
 
@@ -72,10 +75,10 @@ export function ReplaceCandidateList({ candidates, draftSeq, disabled, onPick }:
                                     {candidate.title}
                                 </Box>
                                 <Box sx={{ fontSize: "12px", color: "#6b7280", mt: 0.25 }}>
-                                    유사도 {Math.round(candidate.score * 100)}%
+                                    {fillText(t.similarity, { n: Math.round(candidate.score * 100) })}
                                 </Box>
                             </Box>
-                            <IconButton size="small" sx={{ color: "#6b7280" }} aria-label={open ? "접기" : "내용 보기"}>
+                            <IconButton size="small" sx={{ color: "#6b7280" }} aria-label={open ? t.collapse : t.viewContent}>
                                 {open ? (
                                     <ExpandMoreIcon sx={{ fontSize: 20 }} />
                                 ) : (
@@ -108,7 +111,7 @@ export function ReplaceCandidateList({ candidates, draftSeq, disabled, onPick }:
                                     onClick={() => onPick(`#kb:replace:${draftSeq}:${candidate.seq}`)}
                                     sx={{ mt: 1 }}
                                 >
-                                    이 지식을 수정
+                                    {t.editKnowledge}
                                 </Button>
                             </Box>
                         </Collapse>

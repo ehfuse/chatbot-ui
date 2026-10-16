@@ -2,6 +2,7 @@
 
 import type { ComponentType, ReactNode } from "react";
 import type { AutocompleteOption } from "@ehfuse/mui-form-controls";
+import type { ChatbotLocale } from "../i18n/chatbotMessages";
 
 /** 챗봇이 필요로 하는 로그인 계정 정보다(소비처 계정 객체의 부분집합). */
 export interface ChatbotAccount {
@@ -41,6 +42,7 @@ export interface ChatbotBrandConfig {
 /** 챗봇 UI 횡단 주입 설정이다(모두 선택 — 없으면 각 지점이 기본값으로 동작한다). */
 export interface ChatbotConfig {
     brand?: ChatbotBrandConfig; // 상담 창 브랜딩(로고·인사말) — 비우면 코드샵 기본
+    locale?: ChatbotLocale; // 상담 화면 문구 언어(ko·en·ja·mn·kk, 기본 ko) — 관리 콘솔은 한국어 그대로다(0.5.5)
     account?: ChatbotAccount | null; // 로그인 계정(소비처가 구독한 리액티브 값을 넘긴다)
     isTrainer?: boolean; // 교육자 여부(미지정 시 account.is_trainer 또는 rbac_role==="admin")
     isHeadOffice?: boolean; // 본사 여부(미지정 시 account.license_seq === headOfficeLicenseSeq)

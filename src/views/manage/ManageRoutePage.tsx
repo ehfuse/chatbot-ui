@@ -15,6 +15,8 @@ import ChatbotManagePage from "./ManagePage";
 export interface ChatbotManageRoutePageProps {
     knowledgeQueryKey?: string; // 딥링크 쿼리 키(기본 "knowledge")
     onInitialKnowledgeConsumed?: () => void; // 딥링크 소비 후 처리(미지정 시 주소에서 쿼리 제거)
+    /** 평평한 모양(0.5.6) — ChatbotManagePageProps.flat 참고. 기본 false(그대로). */
+    flat?: boolean;
 }
 
 /** 현재 주소에서 딥링크 seq 를 읽는다(브라우저 밖 환경에서는 0). */
@@ -36,6 +38,7 @@ function stripKnowledgeQuery(queryKey: string): void {
 export default function ChatbotManageRoutePage({
     knowledgeQueryKey = "knowledge",
     onInitialKnowledgeConsumed,
+    flat = false,
 }: ChatbotManageRoutePageProps = {}) {
     // 진입 시점의 쿼리만 본다 — 렌더마다 다시 읽으면 창을 닫아도 계속 다시 열린다.
     const [initialKnowledgeSeq] = useState(() => readKnowledgeSeq(knowledgeQueryKey));
@@ -52,6 +55,7 @@ export default function ChatbotManageRoutePage({
         <ChatbotManagePage
             initialKnowledgeSeq={initialKnowledgeSeq}
             onInitialKnowledgeConsumed={handleConsumed}
+            flat={flat}
         />
     );
 }

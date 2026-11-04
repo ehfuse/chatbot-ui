@@ -18,7 +18,7 @@ import { FeedbackTab } from "./tabs/FeedbackTab";
 import { AnalyticsTab } from "./tabs/AnalyticsTab";
 import { UsageTab } from "./tabs/UsageTab";
 import { ManageTabs } from "./components/ManageTabs";
-import { manageTabPanelSx } from "./components/manageTableStyles";
+import { MANAGE_COLORS, manageTabPanelSx } from "./components/manageTableStyles";
 
 /** 탭 라벨 목록이다. */
 const TAB_LABELS = ["지식", "지식 후보", "답변 피드백", "분석", "사용현황"];
@@ -27,12 +27,19 @@ const TAB_LABELS = ["지식", "지식 후보", "답변 피드백", "분석", "�
 export interface ChatbotManagePageProps {
     initialKnowledgeSeq?: number; // 진입 시 바로 열 지식 seq(딥링크)
     onInitialKnowledgeConsumed?: () => void; // 딥링크를 소비한 뒤 호출된다(쿼리 정리용)
+    /**
+     * 평평한 모양(0.5.6, 2026-11-04) — 그림자 카드 대신 콘텐츠 영역을 가득 채우는 흰 판.
+     * 탭 아래 표 상자는 좌우 · 아래 테두리 없이 윗선 하나로 탭과 가른다. 콘텐츠 여백을 없애는 것(mdl useContentFullBleed)은 소비처가 한다.
+     * 기본 false — 켜지 않은 프로젝트는 그대로다.
+     */
+    flat?: boolean;
 }
 
 /** 챗봇 관리 페이지 컴포넌트다. */
 export default function ChatbotManagePage({
     initialKnowledgeSeq,
     onInitialKnowledgeConsumed,
+    flat = false,
 }: ChatbotManagePageProps = {}) {
     const isTrainer = useIsTrainer();
     const isHeadOffice = useIsHeadOffice();
@@ -96,8 +103,12 @@ export default function ChatbotManagePage({
 
     return (
         <Paper
+            elevation={flat ? 0 : undefined}
+            square={flat}
             sx={{
                 p: 2,
+                // 평평한 모양 — 탭은 판 안쪽 여백(16px)에 서고, 표 상자는 판 끝까지(아래 · 좌우 여백 없음).
+                ...(flat ? { pb: 0, px: 0 } : {}),
                 bgcolor: "#ffffff",
                 // 목록이 화면 세로를 꽉 채우도록 높이 체인을 잇는다(업무함과 동일 — 안 이으면 목록이 중간에서 끊긴다).
                 display: "flex",
@@ -107,15 +118,26 @@ export default function ChatbotManagePage({
             }}
         >
             {/* 업무함 스타일 상단 탭 — 아래 표 테두리 박스 위에 얹힌다(선택 시 검정 배경 + 흰 글씨). */}
+            <Box sx={flat ? { px: 2 } : undefined}>
             <ManageTabs
                 labels={TAB_LABELS}
                 counts={tabCounts}
                 value={tab}
                 onChange={(next) => state.setValue("tab", next)}
             />
+            </Box>
 
             {/* 탭과 이어지는 테두리 박스 — 활성 탭의 필터/표를 감싼다(업무함 표 규칙). */}
-            <Box sx={{ ...manageTabPanelSx, display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
+            <Box
+                sx={{
+                    ...manageTabPanelSx,
+                    ...(flat ? { border: "none", borderTop: `1px solid ${MANAGE_COLORS.borderStrong}`, borderRadius: 0 } : {}),
+                    display: "flex",
+                    flexDirection: "column",
+                    flex: 1,
+                    minHeight: 0,
+                }}
+            >
                 {tab === 0 ? <KnowledgeTab controller={controller} isHeadOffice={isHeadOffice} /> : null}
                 {tab === 1 ? <CandidateTab controller={controller} /> : null}
                 {tab === 2 ? <FeedbackTab controller={controller} /> : null}
